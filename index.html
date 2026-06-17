@@ -4,7 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tauch-Logbuch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" rel="stylesheet" />
   <style>
+    /* ── Material Icons ──────────────────────────────────── */
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      user-select: none;
+      line-height: 1;
+    }
+
     /* ── Grundfarben & Reset ─────────────────────────────── */
     :root {
       --ocean-deep:   #0a2342;
@@ -82,17 +90,97 @@
     main {
       max-width: 860px;
       margin: 0 auto;
+      padding: 1.5rem 1rem 6rem;
+    }
+
+    /* ── Trigger-Button ─────────────────────────────────── */
+    .btn-open-form {
+      width: 100%;
+      padding: 0.9rem 1.25rem;
+      background: var(--white);
+      border: 2px dashed #b8d4e8;
+      border-radius: var(--radius);
+      color: var(--ocean-mid);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 1.5rem;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: inherit;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-open-form:hover {
+      border-color: var(--ocean-teal);
+      background: var(--ocean-foam);
+    }
+
+    .btn-open-form-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--ocean-light), var(--ocean-teal));
+      border-radius: 50%;
+      color: var(--white);
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    /* ── Modal-Overlay ───────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,35,66,0.6);
+      z-index: 300;
+      overflow-y: auto;
       padding: 1.5rem 1rem 3rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
     }
 
     /* ── Formular-Karte ──────────────────────────────────── */
     .form-card {
       background: var(--white);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      box-shadow: 0 12px 50px rgba(10,35,66,0.25);
       padding: 2rem;
-      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 820px;
+      position: relative;
+      margin: auto;
     }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.15s, color 0.15s;
+      font-family: inherit;
+    }
+
+    .modal-close:hover { background: var(--ocean-foam); color: var(--text-dark); }
 
     .form-card h2 {
       color: var(--ocean-mid);
@@ -101,7 +189,9 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      padding-right: 2.5rem;
     }
+
 
     .form-grid {
       display: grid;
@@ -210,9 +300,9 @@
     /* ── Tauchangs-Karten ────────────────────────────────── */
     .section-title {
       color: var(--ocean-mid);
-      font-size: 1.1rem;
+      font-size: 1.35rem;
       font-weight: 700;
-      margin-bottom: 1rem;
+      margin-bottom: 0.3rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -244,45 +334,108 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 0.5rem 1rem;
+    }
+
+    .card-main-info {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .dive-nr {
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1;
+      opacity: 0.9;
+      flex-shrink: 0;
+    }
+
+    .card-text-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
     }
 
     .dive-card-header .dive-title {
       font-weight: 700;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .dive-nr {
-      background: rgba(255,255,255,0.2);
-      border-radius: 6px;
-      padding: 0.1rem 0.5rem;
-      font-size: 0.8rem;
+      font-size: 1.05rem;
+      line-height: 1.2;
     }
 
     .dive-date {
-      font-size: 0.82rem;
-      opacity: 0.8;
-    }
-
-    .btn-delete, .btn-edit, .btn-template {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: var(--white);
-      border-radius: 6px;
-      padding: 0.3rem 0.7rem;
       font-size: 0.8rem;
-      cursor: pointer;
-      transition: background 0.2s;
-      flex-shrink: 0;
+      opacity: 0.65;
     }
 
-    .btn-delete:hover   { background: rgba(192,57,43,0.6);  border-color: transparent; }
-    .btn-edit:hover     { background: rgba(61,189,196,0.55); border-color: transparent; }
-    .btn-template:hover { background: rgba(240,165,0,0.55);  border-color: transparent; }
+    /* ── Karten-Footer mit Aktionen ─────────────────── */
+    .card-footer {
+      border-top: 1px solid var(--ocean-foam);
+      padding: 0.6rem 1rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-action-btn {
+      background: rgba(10,35,66,0.06);
+      border: none;
+      color: var(--ocean-mid);
+      border-radius: 8px;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    .card-action-btn:hover,
+    .card-action-btn:focus-visible {
+      background: rgba(10,35,66,0.12);
+      outline: 2px solid var(--ocean-teal);
+      outline-offset: 1px;
+    }
+
+    .card-action-btn.danger { color: var(--danger); }
+
+    .card-action-btn.danger:hover,
+    .card-action-btn.danger:focus-visible {
+      background: rgba(192,57,43,0.1);
+      color: var(--danger);
+      outline-color: var(--danger);
+    }
+
+    .card-action-btn.danger-confirm {
+      background: rgba(192,57,43,0.9);
+      color: var(--white);
+      min-width: auto;
+      padding: 0 0.7rem;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .card-action-btn.danger-confirm:hover { background: #c0392b; }
+
+    .delete-confirm-text {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.9);
+      white-space: nowrap;
+      margin-right: 0.2rem;
+    }
 
     .form-card.editing {
       border: 2px solid var(--ocean-teal);
@@ -476,11 +629,9 @@
     /* ── Suche ──────────────────────────────────────────── */
     .list-header {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 0.6rem;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
     .search-wrap {
@@ -490,11 +641,11 @@
     }
 
     .search-wrap input {
-      padding: 0.45rem 2rem 0.45rem 1.9rem;
+      padding: 0.5rem 2.2rem 0.5rem 2rem;
       border: 1.5px solid #d0e3ef;
       border-radius: 20px;
-      font-size: 0.85rem;
-      width: 210px;
+      font-size: 0.88rem;
+      width: 100%;
       background: var(--white);
       color: var(--text-dark);
       transition: border-color 0.2s, box-shadow 0.2s;
@@ -543,10 +694,7 @@
       flex-wrap: wrap;
       gap: 0.6rem;
       margin-bottom: 1.25rem;
-      padding: 0.7rem 1.1rem;
-      background: var(--white);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      padding: 0.4rem 0;
     }
 
     .backup-actions { display: flex; gap: 0.5rem; }
@@ -575,6 +723,99 @@
       line-height: 1.4;
     }
 
+    /* ── Backup-Popover ─────────────────────────────────── */
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .backup-btn-wrap { position: relative; }
+
+    .backup-icon-btn .material-symbols-outlined { font-size: 20px; }
+
+    .backup-popover {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 30px rgba(10,35,66,0.15);
+      border: 1px solid rgba(10,35,66,0.08);
+      padding: 1rem 1.1rem;
+      width: 280px;
+      z-index: 100;
+    }
+
+    .backup-popover p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Bottom Navigation ───────────────────────────────── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      border-top: 1px solid rgba(10,35,66,0.08);
+      box-shadow: 0 -4px 20px rgba(10,35,66,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      height: 64px;
+      padding-bottom: env(safe-area-inset-bottom);
+      z-index: 200;
+    }
+
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.62rem;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 0.35rem 0.6rem;
+      min-width: 52px;
+      transition: color 0.15s;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-btn .material-symbols-outlined {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn.active { color: var(--ocean-teal); }
+    .nav-btn:hover  { color: var(--ocean-light); }
+
+    .nav-center {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--ocean-light), var(--ocean-teal));
+      color: var(--white) !important;
+      box-shadow: 0 4px 18px rgba(46,134,171,0.45);
+      margin-bottom: 18px;
+      padding: 0;
+      min-width: unset;
+      font-size: 0;
+    }
+
+    .nav-center .material-symbols-outlined {
+      font-size: 28px;
+    }
+
     /* ── Responsive ──────────────────────────────────────── */
     @media (max-width: 480px) {
       .form-card { padding: 1.25rem; }
@@ -596,128 +837,159 @@
 
 <main>
 
-  <!-- Backup -->
-  <div class="backup-bar">
-    <div class="backup-actions">
-      <button class="btn-backup export" onclick="exportDives()">⬇ Exportieren</button>
-      <button class="btn-backup import" onclick="document.getElementById('importFile').click()">⬆ Importieren</button>
-      <input type="file" id="importFile" accept=".json" style="display:none" />
-    </div>
-    <span class="storage-hint">ℹ️ Daten liegen nur in diesem Browser – exportiere regelmäßig als Backup.</span>
+  <!-- Seite: Tauchgänge -->
+  <div id="pageDives">
+
+    <input type="file" id="importFile" accept=".json" style="display:none" />
+
   </div>
 
-  <!-- Statistik -->
-  <div class="stats-bar" id="statsBar" style="display:none">
-    <div class="stat">
-      <div class="stat-value" id="statCount">0</div>
-      <div class="stat-label">Tauchgänge</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" id="statMaxDepth">–</div>
-      <div class="stat-label">Tiefster (m)</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" id="statTotalTime">–</div>
-      <div class="stat-label">Gesamtzeit (min)</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" id="statTopSite">–</div>
-      <div class="stat-label">Top-Tauchplatz</div>
-    </div>
-  </div>
-
-  <!-- Formular -->
-  <div class="form-card" id="formCard">
-    <h2 id="formTitle">➕ Neuen Tauchgang eintragen</h2>
-    <form id="diveForm">
-      <div class="form-grid">
-
-        <div class="field">
-          <label for="nr">Tauchgang-Nr.</label>
-          <input type="number" id="nr" placeholder="z.B. 42" min="1" />
-        </div>
-
-        <div class="field">
-          <label for="date">Datum *</label>
-          <input type="date" id="date" required />
-        </div>
-
-        <div class="field">
-          <label for="site">Tauchplatz *</label>
-          <input type="text" id="site" placeholder="z.B. Rotes Meer" required />
-        </div>
-
-        <div class="field">
-          <label for="depth">Max. Tiefe (m)</label>
-          <input type="number" id="depth" placeholder="z.B. 28" step="0.1" min="0" />
-        </div>
-
-        <div class="field">
-          <label for="duration">Tauchzeit (min)</label>
-          <input type="number" id="duration" placeholder="z.B. 45" min="1" />
-        </div>
-
-        <div class="field">
-          <label for="temp">Wassertemp. (°C)</label>
-          <input type="number" id="temp" placeholder="z.B. 24" step="0.5" />
-        </div>
-
-        <div class="field">
-          <label for="visibility">Sichtweite</label>
-          <input type="text" id="visibility" placeholder="z.B. 15 m" />
-        </div>
-
-        <div class="field">
-          <label for="buddy">Buddy</label>
-          <input type="text" id="buddy" placeholder="z.B. Maria" />
-        </div>
-
-        <div class="field full-width">
-          <label for="highlights">🐠 Highlights / gesehene Meereslebewesen</label>
-          <textarea id="highlights" placeholder="z.B. Hammerhai, Schildkröte, Riesenmuräne, Delfine …"></textarea>
-        </div>
-
-        <div class="field full-width">
-          <label for="notes">Notizen</label>
-          <textarea id="notes" placeholder="Strömung, Sichtbedingungen, Besonderheiten …"></textarea>
-        </div>
-
-        <div class="field full-width">
-          <label>Tags</label>
-          <div class="tag-presets" id="tagPresets"></div>
-          <div class="tag-custom-row">
-            <input type="text" id="tagCustomInput" placeholder="Eigener Tag …" />
-            <button type="button" class="btn-tag-add" onclick="addCustomTag()">+ Hinzufügen</button>
-          </div>
-          <div class="tag-selected-list" id="tagSelectedList"></div>
-        </div>
-
+  <!-- Seite: Statistik -->
+  <div id="pageStats" style="display:none">
+    <div class="stats-bar" id="statsBar">
+      <div class="stat">
+        <div class="stat-value" id="statCount">–</div>
+        <div class="stat-label">Tauchgänge</div>
       </div>
-      <button type="submit" class="btn-add" id="btnSubmit">Tauchgang speichern</button>
-      <button type="button" class="btn-cancel" id="btnCancel" style="display:none" onclick="cancelEdit()">✕ Bearbeitung abbrechen</button>
-    </form>
-  </div>
-
-  <!-- Gespeicherte Tauchgänge -->
-  <div class="list-header" id="listHeader" style="display:none">
-    <div class="section-title">🌊 Meine Tauchgänge</div>
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Tauchplatz oder Buddy …" oninput="filterDives()" />
-      <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:none">✕</button>
+      <div class="stat">
+        <div class="stat-value" id="statMaxDepth">–</div>
+        <div class="stat-label">Tiefster (m)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="statTotalTime">–</div>
+        <div class="stat-label">Gesamtzeit (min)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="statTopSite">–</div>
+        <div class="stat-label">Top-Tauchplatz</div>
+      </div>
     </div>
   </div>
-  <div class="search-hint" id="searchHint"></div>
-  <div class="dives-list" id="divesList"></div>
 
-  <div class="empty-state" id="noResults" style="display:none">
-    <div class="icon">🔍</div>
-    <p>Keine Tauchgänge gefunden.<br>Versuche einen anderen Suchbegriff.</p>
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+    <div class="form-card" id="formCard">
+      <button class="modal-close" onclick="closeForm()" aria-label="Formular schließen"><span class="material-symbols-outlined">close</span></button>
+      <h2 id="formTitle">Neuen Tauchgang eintragen</h2>
+      <form id="diveForm">
+        <div class="form-grid">
+
+          <div class="field">
+            <label for="nr">Tauchgang-Nr.</label>
+            <input type="number" id="nr" placeholder="z.B. 42" min="1" />
+          </div>
+
+          <div class="field">
+            <label for="date">Datum *</label>
+            <input type="date" id="date" required />
+          </div>
+
+          <div class="field">
+            <label for="site">Tauchplatz *</label>
+            <input type="text" id="site" placeholder="z.B. Rotes Meer" required />
+          </div>
+
+          <div class="field">
+            <label for="depth">Max. Tiefe (m)</label>
+            <input type="number" id="depth" placeholder="z.B. 28" step="0.1" min="0" />
+          </div>
+
+          <div class="field">
+            <label for="duration">Tauchzeit (min)</label>
+            <input type="number" id="duration" placeholder="z.B. 45" min="1" />
+          </div>
+
+          <div class="field">
+            <label for="temp">Wassertemp. (°C)</label>
+            <input type="number" id="temp" placeholder="z.B. 24" step="0.5" />
+          </div>
+
+          <div class="field">
+            <label for="visibility">Sichtweite (m)</label>
+            <input type="text" id="visibility" placeholder="z.B. 15 m" />
+          </div>
+
+          <div class="field">
+            <label for="buddy">Buddy</label>
+            <input type="text" id="buddy" placeholder="z.B. Maria" />
+          </div>
+
+          <div class="field">
+            <label for="tank">Flaschenvolumen (L)</label>
+            <input type="number" id="tank" placeholder="z.B. 12" min="0" step="0.5" />
+          </div>
+
+          <div class="field">
+            <label for="weight">Bleigewicht (kg)</label>
+            <input type="number" id="weight" placeholder="z.B. 6" min="0" step="0.5" />
+          </div>
+
+          <div class="field">
+            <label for="suit">Tauchkleidung</label>
+            <input type="text" id="suit" placeholder="z.B. 5mm Nassanzug" />
+          </div>
+
+          <div class="field full-width">
+            <label for="highlights">🐠 Highlights / gesehene Meereslebewesen</label>
+            <textarea id="highlights" placeholder="z.B. Hammerhai, Schildkröte, Riesenmuräne, Delfine …"></textarea>
+          </div>
+
+          <div class="field full-width">
+            <label for="notes">Notizen</label>
+            <textarea id="notes" placeholder="Strömung, Sichtbedingungen, Besonderheiten …"></textarea>
+          </div>
+
+          <div class="field full-width">
+            <label>Tags</label>
+            <div class="tag-presets" id="tagPresets"></div>
+            <div class="tag-custom-row">
+              <input type="text" id="tagCustomInput" placeholder="Eigener Tag …" />
+              <button type="button" class="btn-tag-add" onclick="addCustomTag()">+ Hinzufügen</button>
+            </div>
+            <div class="tag-selected-list" id="tagSelectedList"></div>
+          </div>
+
+        </div>
+        <button type="submit" class="btn-add" id="btnSubmit">Tauchgang speichern</button>
+        <button type="button" class="btn-cancel" id="btnCancel" style="display:none" onclick="cancelEdit()"><span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle">close</span> Bearbeitung abbrechen</button>
+      </form>
+    </div>
   </div>
 
-  <div class="empty-state" id="emptyState">
-    <div class="icon">🐠</div>
-    <p>Noch keine Tauchgänge eingetragen.<br>Füge deinen ersten Tauchgang oben hinzu!</p>
+  <!-- Gespeicherte Tauchgänge (gehört zu pageDives) -->
+  <div id="pageDivesList">
+    <div class="list-header" id="listHeader">
+      <div class="section-title">
+        🌊 Meine Tauchgänge
+        <div class="backup-btn-wrap">
+          <button class="backup-icon-btn card-action-btn" id="backupIconBtn" onclick="toggleBackupPopover(event)" aria-label="Backup">
+            <span class="material-symbols-outlined icon-backup">backup</span>
+            <span class="material-symbols-outlined icon-close" style="display:none">close</span>
+          </button>
+          <div class="backup-popover" id="backupPopover" style="display:none">
+            <p>Daten liegen nur in diesem Browser – exportiere regelmäßig deine Tauchgänge als JSON-Datei für ein Backup.</p>
+            <button class="btn-backup export" onclick="exportDives(); closeBackupPopover()">⬇ Exportieren</button>
+          </div>
+        </div>
+      </div>
+      <div class="search-wrap">
+        <span class="search-icon material-symbols-outlined">search</span>
+        <input type="text" id="searchInput" placeholder="Tauchplatz oder Buddy …" oninput="filterDives()" />
+        <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:none"><span class="material-symbols-outlined">close</span></button>
+      </div>
+    </div>
+    <div class="search-hint" id="searchHint"></div>
+    <div class="dives-list" id="divesList"></div>
+
+    <div class="empty-state" id="noResults" style="display:none">
+      <div class="icon">🔍</div>
+      <p>Keine Tauchgänge gefunden.<br>Versuche einen anderen Suchbegriff.</p>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="icon">🐠</div>
+      <p>Noch keine Tauchgänge eingetragen.<br>Füge deinen ersten Tauchgang oben hinzu!</p>
+    </div>
   </div>
 
 </main>
@@ -728,6 +1000,29 @@
   const STORAGE_KEY = 'tauchlogbuch_v1';
   let editingId    = null;
   let selectedTags = [];
+
+  // ── Modal öffnen / schließen ─────────────────────────────
+  function openForm() {
+    document.getElementById('modalOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function _resetFormState() {
+    editingId = null;
+    document.getElementById('diveForm').reset();
+    clearTags();
+    fillNextNr();
+    document.getElementById('formTitle').textContent   = 'Neuen Tauchgang eintragen';
+    document.getElementById('btnSubmit').textContent   = 'Tauchgang speichern';
+    document.getElementById('btnCancel').style.display = 'none';
+    document.getElementById('formCard').classList.remove('editing');
+  }
+
+  function closeForm() {
+    document.getElementById('modalOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    if (editingId !== null) _resetFormState();
+  }
 
   const PRESET_TAGS = ['Wrack','Riff','Nachttauchgang','Training','Strömung','Tieftauchgang','Höhle'];
   const TAG_PALETTE = ['#2090c0','#2d9e6b','#e69500','#8b5cf6','#e84855','#b45309','#0891b2','#059669','#d97706','#7c3aed'];
@@ -817,20 +1112,8 @@
 
   // ── Statistik aktualisieren ──────────────────────────────
   function updateStats(dives) {
-    const bar   = document.getElementById('statsBar');
-    const title = document.getElementById('listHeader');
     const empty = document.getElementById('emptyState');
-
-    if (dives.length === 0) {
-      bar.style.display   = 'none';
-      title.style.display = 'none';
-      empty.style.display = 'block';
-      return;
-    }
-
-    bar.style.display   = 'flex';
-    title.style.display = 'flex';
-    empty.style.display = 'none';
+    empty.style.display = dives.length === 0 ? 'block' : 'none';
 
     const depths = dives.map(d => parseFloat(d.depth)).filter(Boolean);
     const times  = dives.map(d => parseInt(d.duration)).filter(Boolean);
@@ -839,10 +1122,10 @@
     dives.forEach(d => { if (d.site) siteCounts[d.site] = (siteCounts[d.site] || 0) + 1; });
     const topSite = Object.entries(siteCounts).sort((a, b) => b[1] - a[1])[0];
 
-    document.getElementById('statCount').textContent    = dives.length;
-    document.getElementById('statMaxDepth').textContent = depths.length ? Math.max(...depths) : '–';
-    document.getElementById('statTotalTime').textContent= times.length  ? times.reduce((a,b)=>a+b,0) : '–';
-    document.getElementById('statTopSite').textContent  = topSite ? topSite[0] : '–';
+    document.getElementById('statCount').textContent     = dives.length || '–';
+    document.getElementById('statMaxDepth').textContent  = depths.length ? Math.max(...depths) : '–';
+    document.getElementById('statTotalTime').textContent = times.length  ? times.reduce((a,b)=>a+b,0) : '–';
+    document.getElementById('statTopSite').textContent   = topSite ? topSite[0] : '–';
   }
 
   // ── Liste rendern ────────────────────────────────────────
@@ -870,15 +1153,12 @@
       card.dataset.buddy = (dive.buddy || '').toLowerCase();
       card.innerHTML = `
         <div class="dive-card-header">
-          <div class="dive-title">
-            <span class="dive-nr">#${dive.nr || '–'}</span>
-            ${dive.site}
-          </div>
-          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-            <span class="dive-date">${formatDate(dive.date)}</span>
-            <button class="btn-template" onclick="templateDive(${dive.id})">⎘ Vorlage</button>
-            <button class="btn-edit" onclick="editDive(${dive.id})">✏️ Bearbeiten</button>
-            <button class="btn-delete" onclick="deleteDive(${dive.id})">✕ Löschen</button>
+          <div class="card-main-info">
+            <span class="dive-nr">${dive.nr || '–'}</span>
+            <div class="card-text-info">
+              <span class="dive-title">${dive.site}</span>
+              <span class="dive-date">${formatDate(dive.date)}</span>
+            </div>
           </div>
           ${dive.tags && dive.tags.length ? `<div class="card-tags">${dive.tags.map(t => `<span class="tag-badge" style="background:${tagColor(t)}">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
         </div>
@@ -893,11 +1173,19 @@
           ${f('Wassertemp.', dive.temp     ? dive.temp + ' °C'      : '')}
           ${f('Sichtweite',  dive.visibility || '')}
           ${f('Buddy',       dive.buddy       || '')}
+          ${f('Flasche',     dive.tank   ? dive.tank   + ' L'  : '')}
+          ${f('Bleigewicht', dive.weight ? dive.weight + ' kg' : '')}
+          ${f('Kleidung',    dive.suit   || '')}
           ${dive.notes ? `
           <div class="dive-field dive-notes">
             <span class="dive-field-label">Notizen</span>
             <span class="dive-field-value">${escapeHtml(dive.notes)}</span>
           </div>` : ''}
+        </div>
+        <div class="card-footer">
+          <div class="card-actions" id="actions-${dive.id}">
+            ${actionButtonsHTML(dive.id)}
+          </div>
         </div>
       `;
       list.appendChild(card);
@@ -958,7 +1246,9 @@
     // Falls gerade eine Bearbeitung läuft, erst abbrechen
     if (editingId !== null) cancelEdit();
 
-    document.getElementById('nr').value         = '';   // fillNextNr() setzt den richtigen Wert
+    if (editingId !== null) _resetFormState();
+
+    document.getElementById('nr').value         = '';
     document.getElementById('date').value       = '';
     document.getElementById('site').value       = dive.site       || '';
     document.getElementById('depth').value      = dive.depth      || '';
@@ -966,14 +1256,16 @@
     document.getElementById('temp').value       = dive.temp       || '';
     document.getElementById('visibility').value = dive.visibility || '';
     document.getElementById('buddy').value      = dive.buddy      || '';
+    document.getElementById('tank').value       = dive.tank       || '';
+    document.getElementById('weight').value     = dive.weight     || '';
+    document.getElementById('suit').value       = dive.suit       || '';
     document.getElementById('highlights').value = '';
     document.getElementById('notes').value      = '';
 
     selectedTags = [...(dive.tags || [])];
     renderTagUI();
     fillNextNr();
-
-    document.getElementById('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    openForm();
     showToast('⎘ Vorlage übernommen – passe die Felder an und speichere.');
   }
 
@@ -992,34 +1284,51 @@
     document.getElementById('temp').value       = dive.temp       || '';
     document.getElementById('visibility').value = dive.visibility || '';
     document.getElementById('buddy').value      = dive.buddy      || '';
+    document.getElementById('tank').value       = dive.tank       || '';
+    document.getElementById('weight').value     = dive.weight     || '';
+    document.getElementById('suit').value       = dive.suit       || '';
     document.getElementById('highlights').value = dive.highlights || '';
     document.getElementById('notes').value      = dive.notes      || '';
 
     selectedTags = [...(dive.tags || [])];
     renderTagUI();
 
-    document.getElementById('formTitle').textContent  = '✏️ Tauchgang bearbeiten';
-    document.getElementById('btnSubmit').textContent  = 'Änderungen speichern';
+    document.getElementById('formTitle').textContent   = '✏️ Tauchgang bearbeiten';
+    document.getElementById('btnSubmit').textContent   = 'Änderungen speichern';
     document.getElementById('btnCancel').style.display = 'block';
     document.getElementById('formCard').classList.add('editing');
 
-    document.getElementById('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    openForm();
   }
 
   function cancelEdit() {
-    editingId = null;
-    document.getElementById('diveForm').reset();
-    clearTags();
-    fillNextNr();
-    document.getElementById('formTitle').textContent   = '➕ Neuen Tauchgang eintragen';
-    document.getElementById('btnSubmit').textContent   = 'Tauchgang speichern';
-    document.getElementById('btnCancel').style.display = 'none';
-    document.getElementById('formCard').classList.remove('editing');
+    _resetFormState();
+    closeForm();
+  }
+
+  // ── Karten-Aktionen ──────────────────────────────────────
+  function actionButtonsHTML(id) {
+    return `
+      <button class="card-action-btn" onclick="templateDive(${id})" aria-label="Als Vorlage übernehmen" title="Als Vorlage"><span class="material-symbols-outlined">content_copy</span></button>
+      <button class="card-action-btn" onclick="editDive(${id})" aria-label="Bearbeiten" title="Bearbeiten"><span class="material-symbols-outlined">edit</span></button>
+      <button class="card-action-btn danger" onclick="confirmDelete(${id})" aria-label="Löschen" title="Löschen"><span class="material-symbols-outlined">delete</span></button>
+    `;
+  }
+
+  function confirmDelete(id) {
+    document.getElementById(`actions-${id}`).innerHTML = `
+      <span class="delete-confirm-text">Wirklich löschen?</span>
+      <button class="card-action-btn danger-confirm" onclick="deleteDive(${id})">Ja</button>
+      <button class="card-action-btn" onclick="cancelDelete(${id})">Nein</button>
+    `;
+  }
+
+  function cancelDelete(id) {
+    document.getElementById(`actions-${id}`).innerHTML = actionButtonsHTML(id);
   }
 
   // ── Tauchgang löschen ────────────────────────────────────
   function deleteDive(id) {
-    if (!confirm('Diesen Tauchgang wirklich löschen?')) return;
     const dives = loadDives().filter(d => d.id !== id);
     saveDives(dives);
     renderDives();
@@ -1046,6 +1355,9 @@
       temp:       document.getElementById('temp').value.trim(),
       visibility: document.getElementById('visibility').value.trim(),
       buddy:      document.getElementById('buddy').value.trim(),
+      tank:       document.getElementById('tank').value.trim(),
+      weight:     document.getElementById('weight').value.trim(),
+      suit:       document.getElementById('suit').value.trim(),
       highlights: document.getElementById('highlights').value.trim(),
       notes:      document.getElementById('notes').value.trim(),
       tags:       [...selectedTags],
@@ -1057,7 +1369,8 @@
       dives = dives.map(d => d.id === editingId ? { ...d, ...fields } : d);
       saveDives(dives);
       renderDives();
-      cancelEdit();
+      _resetFormState();
+      closeForm();
       showToast('✓ Tauchgang aktualisiert!');
     } else {
       dives.push({ id: Date.now(), ...fields });
@@ -1066,10 +1379,9 @@
       this.reset();
       clearTags();
       fillNextNr();
+      closeForm();
       showToast('✓ Tauchgang gespeichert!');
     }
-
-    document.getElementById('divesList').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   // ── Export ───────────────────────────────────────────────
@@ -1139,6 +1451,88 @@
   document.getElementById('tagCustomInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); addCustomTag(); }
   });
+
+  document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modalOverlay')) closeForm();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('modalOverlay').classList.contains('active')) {
+      closeForm();
+    }
+  });
+
+  function toggleBackupPopover(e) {
+    e.stopPropagation();
+    const pop  = document.getElementById('backupPopover');
+    const btn  = document.getElementById('backupIconBtn');
+    const open = pop.style.display === 'none';
+    pop.style.display = open ? 'block' : 'none';
+    btn.querySelector('.icon-backup').style.display = open ? 'none'  : '';
+    btn.querySelector('.icon-close').style.display  = open ? ''      : 'none';
+  }
+
+  function closeBackupPopover() {
+    const pop = document.getElementById('backupPopover');
+    const btn = document.getElementById('backupIconBtn');
+    pop.style.display = 'none';
+    btn.querySelector('.icon-backup').style.display = '';
+    btn.querySelector('.icon-close').style.display  = 'none';
+  }
+
+  document.addEventListener('click', () => closeBackupPopover());
+
+  function navTo(section) {
+    document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.nav === section);
+    });
+
+    const isDives = section === 'dives';
+    const isStats = section === 'stats';
+
+    document.getElementById('pageDives').style.display     = isDives ? '' : 'none';
+    document.getElementById('pageDivesList').style.display = isDives ? '' : 'none';
+    document.getElementById('pageStats').style.display     = isStats ? '' : 'none';
+
+    if (section === 'profile') {
+      showToast('Profil-Funktion kommt bald 🤿');
+      document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.nav === 'dives');
+      });
+      document.getElementById('pageDives').style.display     = '';
+      document.getElementById('pageDivesList').style.display = '';
+    }
+
+    window.scrollTo({ top: 0 });
+  }
+
 </script>
+
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-btn active" data-nav="dives" onclick="navTo('dives')" aria-label="Tauchgänge">
+    <span class="material-symbols-outlined">scuba_diving</span>
+    <span>Tauchgänge</span>
+  </button>
+
+  <button class="nav-btn" data-nav="map" onclick="navTo('map')" aria-label="Karte">
+    <span class="material-symbols-outlined">map</span>
+    <span>Karte</span>
+  </button>
+
+  <button class="nav-btn nav-center" onclick="openForm()" aria-label="Tauchgang eintragen">
+    <span class="material-symbols-outlined">add</span>
+  </button>
+
+  <button class="nav-btn" data-nav="stats" onclick="navTo('stats')" aria-label="Statistik">
+    <span class="material-symbols-outlined">bar_chart</span>
+    <span>Statistik</span>
+  </button>
+
+  <button class="nav-btn" data-nav="profile" onclick="navTo('profile')" aria-label="Profil">
+    <span class="material-symbols-outlined">person</span>
+    <span>Profil</span>
+  </button>
+</nav>
+
 </body>
 </html>
