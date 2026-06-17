@@ -419,23 +419,70 @@
       outline-color: var(--danger);
     }
 
-    .card-action-btn.danger-confirm {
-      background: rgba(192,57,43,0.9);
+    /* ── Löschen-Bestätigung Overlay ────────────────────── */
+    .confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,35,66,0.45);
+      z-index: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirm-dialog {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.75rem 1.5rem 1.25rem;
+      box-shadow: 0 12px 40px rgba(10,35,66,0.2);
+      width: 300px;
+      text-align: center;
+    }
+
+    .confirm-dialog p {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 1.25rem;
+      line-height: 1.4;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    .btn-confirm-no {
+      flex: 1;
+      padding: 0.65rem;
+      background: transparent;
+      border: 1.5px solid #d0e3ef;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-confirm-no:hover { background: var(--ocean-foam); color: var(--text-dark); }
+
+    .btn-confirm-yes {
+      flex: 1;
+      padding: 0.65rem;
+      background: var(--danger);
+      border: none;
+      border-radius: 8px;
       color: var(--white);
-      min-width: auto;
-      padding: 0 0.7rem;
-      font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity 0.15s;
     }
 
-    .card-action-btn.danger-confirm:hover { background: #c0392b; }
-
-    .delete-confirm-text {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.9);
-      white-space: nowrap;
-      margin-right: 0.2rem;
-    }
+    .btn-confirm-yes:hover { opacity: 0.88; }
 
     .form-card.editing {
       border: 2px solid var(--ocean-teal);
@@ -748,12 +795,25 @@
       z-index: 100;
     }
 
-    .backup-popover p {
+    .backup-info-text {
       font-size: 0.82rem;
       color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 0.75rem;
+      line-height: 1.6;
+      margin-bottom: 0.9rem;
     }
+
+    .backup-popover-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-backup {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-backup .material-symbols-outlined { font-size: 16px; }
 
     /* ── Bottom Navigation ───────────────────────────────── */
     .bottom-nav {
@@ -962,13 +1022,20 @@
       <div class="section-title">
         🌊 Meine Tauchgänge
         <div class="backup-btn-wrap">
-          <button class="backup-icon-btn card-action-btn" id="backupIconBtn" onclick="toggleBackupPopover(event)" aria-label="Backup">
-            <span class="material-symbols-outlined icon-backup">backup</span>
+          <button class="backup-icon-btn card-action-btn" id="backupIconBtn" onclick="toggleBackupPopover(event)" aria-label="Export / Import">
+            <span class="material-symbols-outlined icon-backup">download</span>
             <span class="material-symbols-outlined icon-close" style="display:none">close</span>
           </button>
           <div class="backup-popover" id="backupPopover" style="display:none">
-            <p>Daten liegen nur in diesem Browser – exportiere regelmäßig deine Tauchgänge als JSON-Datei für ein Backup.</p>
-            <button class="btn-backup export" onclick="exportDives(); closeBackupPopover()">⬇ Exportieren</button>
+            <p class="backup-info-text">Deine Tauchgänge werden nur lokal in diesem Browser gespeichert – nicht in einer Cloud. Wechselst du das Gerät oder den Browser, sind die Daten dort nicht verfügbar. Exportiere daher regelmäßig eine JSON-Datei als Sicherung.</p>
+            <div class="backup-popover-actions">
+              <button class="btn-backup export" onclick="exportDives(); closeBackupPopover()">
+                <span class="material-symbols-outlined">download</span> Exportieren
+              </button>
+              <button class="btn-backup import" onclick="document.getElementById('importFile').click(); closeBackupPopover()">
+                <span class="material-symbols-outlined">upload</span> Importieren
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -993,6 +1060,16 @@
   </div>
 
 </main>
+
+<div class="confirm-overlay" id="confirmOverlay" style="display:none" role="dialog" aria-modal="true">
+  <div class="confirm-dialog">
+    <p>Tauchgang wirklich löschen?</p>
+    <div class="confirm-actions">
+      <button class="btn-confirm-no" onclick="cancelDeleteOverlay()">Nein</button>
+      <button class="btn-confirm-yes" onclick="confirmDeleteOverlay()">Ja, löschen</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -1171,7 +1248,7 @@
           ${f('Max. Tiefe',  dive.depth    ? dive.depth + ' m'      : '')}
           ${f('Tauchzeit',   dive.duration ? dive.duration + ' min'  : '')}
           ${f('Wassertemp.', dive.temp     ? dive.temp + ' °C'      : '')}
-          ${f('Sichtweite',  dive.visibility || '')}
+          ${f('Sichtweite',  dive.visibility ? dive.visibility + ' m' : '')}
           ${f('Buddy',       dive.buddy       || '')}
           ${f('Flasche',     dive.tank   ? dive.tank   + ' L'  : '')}
           ${f('Bleigewicht', dive.weight ? dive.weight + ' kg' : '')}
@@ -1315,16 +1392,21 @@
     `;
   }
 
+  let _pendingDeleteId = null;
+
   function confirmDelete(id) {
-    document.getElementById(`actions-${id}`).innerHTML = `
-      <span class="delete-confirm-text">Wirklich löschen?</span>
-      <button class="card-action-btn danger-confirm" onclick="deleteDive(${id})">Ja</button>
-      <button class="card-action-btn" onclick="cancelDelete(${id})">Nein</button>
-    `;
+    _pendingDeleteId = id;
+    document.getElementById('confirmOverlay').style.display = 'flex';
   }
 
-  function cancelDelete(id) {
-    document.getElementById(`actions-${id}`).innerHTML = actionButtonsHTML(id);
+  function cancelDeleteOverlay() {
+    _pendingDeleteId = null;
+    document.getElementById('confirmOverlay').style.display = 'none';
+  }
+
+  function confirmDeleteOverlay() {
+    if (_pendingDeleteId !== null) deleteDive(_pendingDeleteId);
+    cancelDeleteOverlay();
   }
 
   // ── Tauchgang löschen ────────────────────────────────────
