@@ -579,7 +579,62 @@
 
     .btn-cancel:hover { background: var(--ocean-foam); color: var(--text-dark); }
 
-    .dive-card-body {
+    .dive-card-header {
+      cursor: pointer;
+      transition: filter 0.15s;
+    }
+
+    .dive-card-header:hover { filter: brightness(1.07); }
+
+    .dive-card-peek {
+      display: flex;
+      align-items: center;
+      padding: 0.65rem 1.25rem;
+      gap: 1rem;
+      cursor: pointer;
+      border-top: 1px solid var(--ocean-foam);
+      transition: background 0.15s;
+    }
+
+    .dive-card-peek:hover { background: var(--ocean-foam); }
+
+    .peek-metrics {
+      display: flex;
+      gap: 1.25rem;
+      flex: 1;
+      min-width: 0;
+      flex-wrap: nowrap;
+      overflow: hidden;
+    }
+
+    .peek-metrics .dive-field--ellipsis {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .peek-mood {
+      font-size: 1.15rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .peek-chevron {
+      color: var(--text-muted);
+      font-size: 1.15rem;
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .dive-card.expanded .peek-chevron { transform: rotate(180deg); }
+
+    .dive-card-details {
+      display: none;
+      border-top: 1px solid var(--ocean-foam);
+    }
+
+    .dive-card.expanded .dive-card-details { display: block; }
+
+    .dive-card-details-grid {
       padding: 1rem 1.25rem;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -2647,8 +2702,8 @@
       card.dataset.buddy = (dive.buddy || '').toLowerCase();
       const flag = countryFlag(dive.country);
       card.innerHTML = `
-        <div class="dive-card-header">
-          <div class="card-main-info"${(flag || dive.mood) ? ' style="padding-right:110px"' : ''}>
+        <div class="dive-card-header" onclick="toggleCard('${dive.id}')">
+          <div class="card-main-info"${flag ? ' style="padding-right:110px"' : ''}>
             <span class="dive-nr">${dive.nr || '–'}</span>
             <div class="card-text-info">
               <span class="dive-title">${dive.site}</span>
@@ -2656,35 +2711,39 @@
             </div>
           </div>
           ${dive.tags && dive.tags.length ? `<div class="card-tags">${dive.tags.map(t => `<span class="tag-badge" style="background:${tagColor(t)}">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
-          ${(flag || dive.mood) ? `
+          ${flag ? `
           <div class="card-header-right">
-            ${flag ? `<div class="card-country"><span class="card-country-flag">${flag}</span><span class="card-country-name">${escapeHtml(dive.country)}</span></div>` : ''}
-            ${dive.mood ? `<span class="card-mood-corner" title="${dive.mood}">${MOOD_EMOJI[dive.mood] || ''}</span>` : ''}
+            <div class="card-country"><span class="card-country-flag">${flag}</span><span class="card-country-name">${escapeHtml(dive.country)}</span></div>
           </div>` : ''}
         </div>
-        <div class="dive-card-body">
-          ${fi('arrow_downward',  'Max. Tiefe',        dive.depth    ? dive.depth + ' m'      : '')}
-          ${fi('schedule',        'Tauchzeit',         dive.duration ? dive.duration + ' min'  : '')}
-          ${fi('thermostat',      'Wassertemperatur',  dive.temp     ? dive.temp + ' °C'      : '')}
-          ${fi('visibility',      'Sichtweite',        dive.visibility ? dive.visibility + ' m' : '')}
-          ${fi('person',          'Buddy',             dive.buddy       || '', 'dive-field--ellipsis')}
-          ${fi('propane_tank',    'Flasche',           dive.tank   ? dive.tank   + ' L'  : '')}
-          ${fi('fitness_center',  'Bleigewicht',       dive.weight ? dive.weight + ' kg' : '')}
-          ${fi('dry_cleaning',    'Kleidung',          dive.suit   || '')}
-          ${dive.sightings && dive.sightings.length ? `
-          <div class="dive-field dive-notes">
-            <span class="dive-field-label">🐠 Gesehene Meereslebewesen</span>
-            <div class="sighting-chips">${dive.sightings.map(s => `<span class="sighting-chip">${escapeHtml(s)}</span>`).join('')}</div>
-          </div>` : ''}
-          ${dive.notes ? `
-          <button class="notes-toggle" id="notes-toggle-${dive.id}" onclick="toggleNotes('${dive.id}')">
-            <span class="material-symbols-outlined">notes</span>
-            Notizen
-            <span class="material-symbols-outlined notes-toggle-chevron" id="notes-chevron-${dive.id}">expand_more</span>
-          </button>
-          <div class="notes-collapsible" id="notes-collapse-${dive.id}">
-            <span class="notes-collapsible-text">${escapeHtml(dive.notes)}</span>
-          </div>` : ''}
+        <div class="dive-card-peek" onclick="toggleCard('${dive.id}')">
+          ${dive.mood ? `<span class="peek-mood" title="${dive.mood}">${MOOD_EMOJI[dive.mood] || ''}</span>` : ''}
+          <div class="peek-metrics">
+            ${fi('arrow_downward', 'Max. Tiefe',  dive.depth    ? dive.depth    + ' m'   : '')}
+            ${fi('schedule',       'Tauchzeit',   dive.duration ? dive.duration + ' min' : '')}
+            ${fi('person',         'Buddy',        dive.buddy    || '', 'dive-field--ellipsis')}
+          </div>
+          <span class="material-symbols-outlined peek-chevron">expand_more</span>
+        </div>
+        <div class="dive-card-details" id="card-details-${dive.id}">
+          <div class="dive-card-details-grid">
+            ${fi('thermostat',     'Wassertemperatur', dive.temp        ? dive.temp        + ' °C'  : '')}
+            ${fi('visibility',     'Sichtweite',       dive.visibility  ? dive.visibility  + ' m'   : '')}
+            ${fi('person',         'Buddy',            dive.buddy       || '')}
+            ${fi('propane_tank',   'Flasche',          dive.tank        ? dive.tank        + ' L'   : '')}
+            ${fi('fitness_center', 'Bleigewicht',      dive.weight      ? dive.weight      + ' kg'  : '')}
+            ${fi('dry_cleaning',   'Kleidung',         dive.suit        || '')}
+            ${dive.sightings && dive.sightings.length ? `
+            <div class="dive-field dive-notes">
+              <span class="dive-field-label">🐠 Gesehene Meereslebewesen</span>
+              <div class="sighting-chips">${dive.sightings.map(s => `<span class="sighting-chip">${escapeHtml(s)}</span>`).join('')}</div>
+            </div>` : ''}
+            ${dive.notes ? `
+            <div class="dive-field dive-notes">
+              <span class="dive-field-label">Notizen</span>
+              <span class="notes-collapsible-text">${escapeHtml(dive.notes)}</span>
+            </div>` : ''}
+          </div>
         </div>
         <div class="card-footer">
           ${dive.photos && dive.photos.length ? `
@@ -2793,6 +2852,11 @@
     document.getElementById('searchClear').style.display = 'none';
     applyFilter();
     document.getElementById('searchInput').focus();
+  }
+
+  function toggleCard(id) {
+    const card = document.querySelector(`.dive-card[data-id="${id}"]`);
+    if (card) card.classList.toggle('expanded');
   }
 
   function toggleNotes(id) {
