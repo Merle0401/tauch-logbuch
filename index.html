@@ -343,11 +343,27 @@
       background: linear-gradient(90deg, var(--ocean-mid), var(--ocean-light));
       color: var(--white);
       padding: 0.85rem 1.25rem;
+      position: relative;
+    }
+
+    .card-country {
+      position: absolute;
+      top: 0.75rem;
+      right: 1.25rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      flex-wrap: nowrap;
-      gap: 0.5rem 1rem;
+      gap: 0.3rem;
+      white-space: nowrap;
+    }
+
+    .card-country-flag { font-size: 1.25rem; line-height: 1; }
+
+    .card-country-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      opacity: 0.88;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
     }
 
     .card-main-info {
@@ -387,7 +403,8 @@
       border-top: 1px solid var(--ocean-foam);
       padding: 0.6rem 1rem;
       display: flex;
-      justify-content: flex-end;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .card-actions {
@@ -625,28 +642,32 @@
 
     .photo-remove .material-symbols-outlined { font-size: 12px; }
 
-    .card-photos {
-      display: flex;
-      gap: 0.5rem;
-      padding: 0.6rem 1.25rem;
-      overflow-x: auto;
-      border-top: 1px solid var(--ocean-foam);
-      scrollbar-width: none;
-    }
-
-    .card-photos::-webkit-scrollbar { display: none; }
-
-    .card-photo-thumb {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 8px;
+    .card-photo-stack {
+      position: relative;
+      width: 46px;
+      height: 46px;
       flex-shrink: 0;
       cursor: pointer;
-      transition: transform 0.15s;
     }
 
-    .card-photo-thumb:hover { transform: scale(1.05); }
+    .card-photo-stack img {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(10,35,66,0.18);
+      transition: transform 0.18s;
+    }
+
+    .card-photo-stack img:nth-child(1) { transform: rotate(-6deg) translate(-2px, 2px); z-index: 1; }
+    .card-photo-stack img:nth-child(2) { transform: rotate(2deg)  translate( 3px,-1px); z-index: 2; }
+    .card-photo-stack img:nth-child(3) { transform: rotate(-1deg) translate( 0px, 0px); z-index: 3; }
+
+    .card-photo-stack:hover img:nth-child(1) { transform: rotate(-10deg) translate(-6px, 4px); }
+    .card-photo-stack:hover img:nth-child(2) { transform: rotate( 4deg)  translate( 5px,-2px); }
+    .card-photo-stack:hover img:nth-child(3) { transform: rotate(-2deg)  translate( 0px, 0px); }
 
     .dive-notes .dive-field-value {
       color: var(--text-muted);
@@ -675,6 +696,77 @@
       color: var(--text-dark);
       line-height: 1.55;
       white-space: pre-wrap;
+    }
+
+    .sighting-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.3rem;
+    }
+
+    .sighting-chip {
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: rgba(61,189,196,0.13);
+      color: var(--ocean-mid);
+      border: 1px solid rgba(61,189,196,0.35);
+      border-radius: 20px;
+      padding: 0.15rem 0.55rem;
+    }
+
+    .sightings-input-wrap {
+      border: 1.5px solid #b8d4e8;
+      border-radius: 8px;
+      padding: 0.45rem 0.65rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      background: var(--white);
+      cursor: text;
+      transition: border-color 0.2s;
+    }
+
+    .sightings-input-wrap:focus-within { border-color: var(--ocean-teal); }
+
+    .sighting-form-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(61,189,196,0.15);
+      color: var(--ocean-mid);
+      border: 1px solid rgba(61,189,196,0.4);
+      border-radius: 20px;
+      padding: 0.15rem 0.45rem 0.15rem 0.6rem;
+      white-space: nowrap;
+    }
+
+    .sighting-form-chip button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--ocean-mid);
+      opacity: 0.6;
+      font-size: 14px;
+      line-height: 1;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .sighting-form-chip button:hover { opacity: 1; }
+
+    #sightingsInput {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      min-width: 120px;
+      flex: 1;
+      padding: 0.1rem 0;
     }
 
     /* ── Leer-Zustand ────────────────────────────────────── */
@@ -749,6 +841,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.35rem;
+      margin-top: 0.45rem;
       padding-top: 0.45rem;
       border-top: 1px solid rgba(255,255,255,0.2);
     }
@@ -821,6 +914,101 @@
       opacity: 0.5;
     }
 
+    .filter-icon-btn {
+      position: relative;
+      background: rgba(10,35,66,0.06);
+      border: none;
+      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ocean-mid);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .filter-icon-btn:hover { background: rgba(10,35,66,0.12); }
+
+    .filter-icon-btn .material-symbols-outlined { font-size: 20px; }
+
+    .filter-active-dot {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      border: 1.5px solid var(--white);
+    }
+
+    .filter-section {
+      margin-bottom: 1.25rem;
+    }
+
+    .filter-section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .filter-chip {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+      border: 1.5px solid #d0e3ef;
+      background: var(--white);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .filter-chip.active {
+      background: var(--ocean-mid);
+      border-color: var(--ocean-mid);
+      color: var(--white);
+    }
+
+    .filter-range-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .filter-range-input {
+      flex: 1;
+      padding: 0.45rem 0.65rem;
+      border: 1.5px solid #d0e3ef;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      color: var(--text-dark);
+      background: var(--white);
+      transition: border-color 0.2s;
+    }
+
+    .filter-range-input:focus {
+      outline: none;
+      border-color: var(--ocean-teal);
+    }
+
+    .filter-range-sep {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
     .search-clear {
       position: absolute;
       right: 0.55rem;
@@ -858,6 +1046,34 @@
       text-transform: uppercase;
       letter-spacing: 0.06em;
       margin-bottom: 1rem;
+    }
+
+    .chart-toggle {
+      display: flex;
+      background: var(--ocean-foam);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .chart-toggle-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .chart-toggle-btn.active {
+      background: var(--white);
+      color: var(--ocean-mid);
+      box-shadow: 0 1px 4px rgba(10,35,66,0.1);
     }
 
     .chart-canvas {
@@ -1082,6 +1298,32 @@
       <div class="chart-title">Tiefenverteilung</div>
       <div id="chartDepthContainer"></div>
     </div>
+
+    <div class="chart-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div class="chart-title" id="chartSitesTitle" style="margin-bottom:0">Top-Tauchplätze</div>
+        <div class="chart-toggle" id="chartSitesToggle">
+          <button class="chart-toggle-btn active" data-mode="sites" onclick="setSitesMode('sites')">Spots</button>
+          <button class="chart-toggle-btn" data-mode="countries" onclick="setSitesMode('countries')">Länder</button>
+        </div>
+      </div>
+      <div id="chartSitesContainer"></div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-title">Gesamte Tauchzeit über die Zeit</div>
+      <div id="chartCumTimeContainer"></div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-title">Verteilung der Tauch-Typen</div>
+      <div id="chartTagsContainer"></div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-title">Häufigste Tauchpartner</div>
+      <div id="chartBuddyContainer"></div>
+    </div>
   </div>
 
   <!-- Modal -->
@@ -1100,6 +1342,12 @@
           <div class="field">
             <label for="site">Tauchplatz *</label>
             <input type="text" id="site" placeholder="z.B. Rotes Meer" required />
+          </div>
+
+          <div class="field">
+            <label for="country">Land</label>
+            <input type="text" id="country" placeholder="z.B. Ägypten" list="countryList" autocomplete="off" />
+            <datalist id="countryList"></datalist>
           </div>
 
           <div class="field">
@@ -1143,8 +1391,11 @@
           </div>
 
           <div class="field full-width">
-            <label for="highlights">🐠 Highlights / gesehene Meereslebewesen</label>
-            <textarea id="highlights" placeholder="z.B. Hammerhai, Schildkröte, Riesenmuräne, Delfine …"></textarea>
+            <label>🐠 Gesehene Meereslebewesen</label>
+            <div class="sightings-input-wrap" id="sightingsWrap" onclick="document.getElementById('sightingsInput').focus()">
+              <div id="sightingsChipList" style="display:contents"></div>
+              <input id="sightingsInput" type="text" placeholder="Tier eingeben, Leertaste drücken …" autocomplete="off" />
+            </div>
           </div>
 
           <div class="field full-width">
@@ -1202,10 +1453,16 @@
           </div>
         </div>
       </div>
-      <div class="search-wrap">
-        <span class="search-icon material-symbols-outlined">search</span>
-        <input type="text" id="searchInput" placeholder="Tauchplatz oder Buddy …" oninput="filterDives()" />
-        <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:none"><span class="material-symbols-outlined">close</span></button>
+      <div style="display:flex;gap:0.5rem;align-items:center">
+        <div class="search-wrap" style="flex:1">
+          <span class="search-icon material-symbols-outlined">search</span>
+          <input type="text" id="searchInput" placeholder="Tauchplatz oder Buddy …" oninput="filterDives()" />
+          <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:none"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <button class="filter-icon-btn" id="filterIconBtn" onclick="openFilterOverlay()" aria-label="Filter">
+          <span class="material-symbols-outlined">tune</span>
+          <span class="filter-active-dot" id="filterActiveDot" style="display:none"></span>
+        </button>
       </div>
     </div>
     <div class="search-hint" id="searchHint"></div>
@@ -1223,6 +1480,69 @@
   </div>
 
 </main>
+
+<!-- Filter-Overlay -->
+<div class="modal-overlay" id="filterOverlay" role="dialog" aria-modal="true">
+  <div class="form-card" id="filterCard" style="max-width:520px">
+    <button class="modal-close" onclick="closeFilterOverlay()" aria-label="Filter schließen"><span class="material-symbols-outlined">close</span></button>
+    <h2 style="margin-bottom:1.5rem">Filter</h2>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Land</div>
+      <div class="filter-chips" id="filterCountryChips"></div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">🐠 Meereslebewesen</div>
+      <div class="filter-chips" id="filterSightingChips"></div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Tags</div>
+      <div class="filter-chips" id="filterTagChips"></div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Buddy</div>
+      <div class="filter-chips" id="filterBuddyChips"></div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Max. Tiefe</div>
+      <div class="filter-range-row">
+        <input type="number" id="filterDepthMin" placeholder="von (m)" min="0" step="1" class="filter-range-input" oninput="applyFilter()" />
+        <span class="filter-range-sep">–</span>
+        <input type="number" id="filterDepthMax" placeholder="bis (m)" min="0" step="1" class="filter-range-input" oninput="applyFilter()" />
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Tauchzeit</div>
+      <div class="filter-range-row">
+        <input type="number" id="filterDurMin" placeholder="von (min)" min="0" step="1" class="filter-range-input" oninput="applyFilter()" />
+        <span class="filter-range-sep">–</span>
+        <input type="number" id="filterDurMax" placeholder="bis (min)" min="0" step="1" class="filter-range-input" oninput="applyFilter()" />
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Wassertemperatur</div>
+      <div class="filter-range-row">
+        <input type="number" id="filterTempMin" placeholder="von (°C)" step="0.5" class="filter-range-input" oninput="applyFilter()" />
+        <span class="filter-range-sep">–</span>
+        <input type="number" id="filterTempMax" placeholder="bis (°C)" step="0.5" class="filter-range-input" oninput="applyFilter()" />
+      </div>
+    </div>
+
+    <div style="margin-top:1.75rem;border-top:1px solid var(--ocean-foam);padding-top:1.25rem">
+      <div id="filterResultCount" style="text-align:center;font-size:0.88rem;color:var(--text-muted);margin-bottom:1rem;min-height:1.2em"></div>
+      <div style="display:flex;gap:0.75rem">
+        <button type="button" class="btn-cancel" style="flex:1;margin-top:0" onclick="resetFilters()">Zurücksetzen</button>
+        <button type="button" style="flex:1;padding:0.75rem;background:linear-gradient(90deg,var(--ocean-light),var(--ocean-teal));color:var(--white);border:none;border-radius:8px;font-size:0.95rem;font-weight:600;font-family:inherit;cursor:pointer;letter-spacing:0.02em;transition:opacity 0.2s" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'" onclick="closeFilterOverlay()">Fertig</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="confirm-overlay" id="confirmOverlay" style="display:none" role="dialog" aria-modal="true">
   <div class="confirm-dialog">
@@ -1316,6 +1636,42 @@
   function clearTags() {
     selectedTags = [];
     renderTagUI();
+  }
+
+  // ── Meereslebewesen-Chips ────────────────────────────────
+  let selectedSightings = [];
+
+  function renderSightingsUI() {
+    const list = document.getElementById('sightingsChipList');
+    if (!list) return;
+    list.innerHTML = selectedSightings.map((s, i) => `
+      <span class="sighting-form-chip">
+        ${escapeHtml(s)}
+        <button type="button" onclick="removeSighting(${i})" aria-label="${escapeHtml(s)} entfernen">×</button>
+      </span>`).join('');
+  }
+
+  function commitSightingInput() {
+    const input = document.getElementById('sightingsInput');
+    if (!input) return;
+    const raw = input.value.replace(/,/g, ' ');
+    const words = raw.split(/\s+/).map(w => w.trim()).filter(Boolean);
+    words.forEach(w => {
+      const name = w.charAt(0).toUpperCase() + w.slice(1);
+      if (!selectedSightings.includes(name)) selectedSightings.push(name);
+    });
+    input.value = '';
+    renderSightingsUI();
+  }
+
+  function removeSighting(i) {
+    selectedSightings.splice(i, 1);
+    renderSightingsUI();
+  }
+
+  function clearSightings() {
+    selectedSightings = [];
+    renderSightingsUI();
   }
 
   // ── Fotos ────────────────────────────────────────────────
@@ -1436,6 +1792,10 @@
 
     renderChartMonth(dives);
     renderChartDepth(dives);
+    renderChartSites(dives);
+    renderChartCumTime(dives);
+    renderChartTags(dives);
+    renderChartBuddy(dives);
   }
 
   // ── Diagramm-Hilfsfunktion ───────────────────────────────
@@ -1548,6 +1908,91 @@
     drawBarChart('chartMonthContainer', labels, values, '#2e86ab');
   }
 
+  // ── Diagramm: Top-Tauchplätze (horizontal) ──────────────
+  let sitesMode = 'sites';
+
+  function setSitesMode(mode) {
+    sitesMode = mode;
+    document.querySelectorAll('#chartSitesToggle .chart-toggle-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+    document.getElementById('chartSitesTitle').textContent =
+      mode === 'sites' ? 'Top-Tauchplätze' : 'Top-Länder';
+    renderChartSites(loadDives());
+  }
+
+  function renderChartSites(dives) {
+    const container = document.getElementById('chartSitesContainer');
+    if (!container) return;
+
+    const counts = {};
+    if (sitesMode === 'countries') {
+      dives.forEach(d => { if (d.country) counts[d.country] = (counts[d.country] || 0) + 1; });
+    } else {
+      dives.forEach(d => { if (d.site) counts[d.site] = (counts[d.site] || 0) + 1; });
+    }
+
+    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+    if (!entries.length) {
+      container.innerHTML = `<div class="chart-empty">${sitesMode === 'countries' ? 'Noch keine Länder eingetragen.' : 'Noch keine Daten vorhanden.'}</div>`;
+      return;
+    }
+
+    const DPR    = window.devicePixelRatio || 1;
+    const W      = container.clientWidth || 300;
+    const PAD_L  = 4;
+    const PAD_R  = 36;
+    const ROW_H  = 48;
+    const BAR_H  = 16;
+    const n      = entries.length;
+    const H      = 8 + n * ROW_H + 4;
+    const maxVal = entries[0][1];
+    const innerW = W - PAD_L - PAD_R;
+
+    const COLORS = ['#1a4a7a','#2e86ab','#3dbdc4','#6dcfd4','#9ddfe2'];
+
+    const canvas = document.createElement('canvas');
+    canvas.width  = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    canvas.className    = 'chart-canvas';
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(DPR, DPR);
+
+    entries.forEach(([label, count], i) => {
+      const rowY = 8 + i * ROW_H;
+      const barW = Math.max(4, (count / maxVal) * innerW);
+      const barY = rowY + 20;
+
+      // Name oben, linksbündig, max 12 Zeichen
+      ctx.fillStyle    = 'rgba(10,35,66,0.72)';
+      ctx.font         = '13px system-ui, sans-serif';
+      ctx.textAlign    = 'left';
+      ctx.textBaseline = 'top';
+      const lbl = label.length > 12 ? label.slice(0, 12) + '…' : label;
+      ctx.fillText(lbl, PAD_L, rowY + 2);
+
+      // Balken darunter, volle Breite
+      ctx.fillStyle = COLORS[i] || COLORS[COLORS.length - 1];
+      ctx.beginPath();
+      ctx.roundRect(PAD_L, barY, barW, BAR_H, 4);
+      ctx.fill();
+
+      // Anzahl rechts vom Balken
+      ctx.fillStyle    = 'rgba(10,35,66,0.45)';
+      ctx.font         = 'bold 11px system-ui, sans-serif';
+      ctx.textAlign    = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(count, PAD_L + barW + 6, barY + BAR_H / 2);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(canvas);
+  }
+
   // ── Diagramm: Tiefenverteilung ───────────────────────────
   function renderChartDepth(dives) {
     const bins   = [0, 0, 0, 0];
@@ -1563,6 +2008,345 @@
     });
 
     drawBarChart('chartDepthContainer', labels, bins, '#3dbdc4');
+  }
+
+  // ── Diagramm: Kumulative Tauchzeit ──────────────────────
+  function renderChartCumTime(dives) {
+    const container = document.getElementById('chartCumTimeContainer');
+    if (!container) return;
+
+    const withTime = dives
+      .filter(d => d.date && parseInt(d.duration, 10) > 0)
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    if (!withTime.length) {
+      container.innerHTML = '<div class="chart-empty">Noch keine Zeitdaten vorhanden.</div>';
+      return;
+    }
+
+    if (withTime.length === 1) {
+      container.innerHTML = `<div class="chart-empty">Erst ein Tauchgang – komm bald wieder tauchen! 🤿</div>`;
+      return;
+    }
+
+    let cumSum = 0;
+    const points = withTime.map(d => {
+      cumSum += parseInt(d.duration, 10);
+      return { date: d.date, cum: cumSum };
+    });
+
+    const DPR   = window.devicePixelRatio || 1;
+    const W     = container.clientWidth || 300;
+    const H     = 160;
+    const PAD   = { top: 16, right: 16, bottom: 36, left: 40 };
+    const innerW = W - PAD.left - PAD.right;
+    const innerH = H - PAD.top - PAD.bottom;
+    const maxY  = points[points.length - 1].cum;
+
+    const canvas = document.createElement('canvas');
+    canvas.width  = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    canvas.className = 'chart-canvas';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(DPR, DPR);
+
+    // Hilfsfunktion: Datenpunkt → Pixel
+    function px(i) { return PAD.left + (i / (points.length - 1)) * innerW; }
+    function py(v) { return PAD.top  + innerH - (v / maxY) * innerH; }
+
+    // Gridlines (3 Stufen)
+    ctx.strokeStyle = 'rgba(10,35,66,0.07)';
+    ctx.lineWidth   = 1;
+    [0.25, 0.5, 0.75, 1].forEach(f => {
+      const yy = PAD.top + innerH - f * innerH;
+      ctx.beginPath(); ctx.moveTo(PAD.left, yy); ctx.lineTo(W - PAD.right, yy); ctx.stroke();
+      // Y-Label
+      ctx.fillStyle    = 'rgba(10,35,66,0.4)';
+      ctx.font         = `10px system-ui, sans-serif`;
+      ctx.textAlign    = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(Math.round(maxY * f) + ' min', PAD.left - 4, yy);
+    });
+
+    // Gefüllte Fläche unter der Linie
+    const grad = ctx.createLinearGradient(0, PAD.top, 0, PAD.top + innerH);
+    grad.addColorStop(0,   'rgba(61,189,196,0.35)');
+    grad.addColorStop(1,   'rgba(61,189,196,0.02)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(px(0), PAD.top + innerH);
+    points.forEach((p, i) => ctx.lineTo(px(i), py(p.cum)));
+    ctx.lineTo(px(points.length - 1), PAD.top + innerH);
+    ctx.closePath();
+    ctx.fill();
+
+    // Linie
+    ctx.strokeStyle = '#2e86ab';
+    ctx.lineWidth   = 2.5;
+    ctx.lineJoin    = 'round';
+    ctx.beginPath();
+    points.forEach((p, i) => i === 0 ? ctx.moveTo(px(0), py(p.cum)) : ctx.lineTo(px(i), py(p.cum)));
+    ctx.stroke();
+
+    // Punkte
+    points.forEach((p, i) => {
+      ctx.fillStyle = '#2e86ab';
+      ctx.beginPath();
+      ctx.arc(px(i), py(p.cum), 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(px(i), py(p.cum), 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // X-Achse: erstes und letztes Datum
+    ctx.fillStyle    = 'rgba(10,35,66,0.45)';
+    ctx.font         = `10px system-ui, sans-serif`;
+    ctx.textBaseline = 'top';
+    const fmtShort = iso => { const [y,m,d] = iso.split('-'); return `${d}.${m}.${y.slice(2)}`; };
+    ctx.textAlign = 'left';
+    ctx.fillText(fmtShort(points[0].date), PAD.left, H - PAD.bottom + 6);
+    ctx.textAlign = 'right';
+    ctx.fillText(fmtShort(points[points.length-1].date), W - PAD.right, H - PAD.bottom + 6);
+
+    container.innerHTML = '';
+    container.appendChild(canvas);
+  }
+
+  // ── Diagramm: Tag-Verteilung (Donut) ────────────────────
+  function renderChartTags(dives) {
+    const container = document.getElementById('chartTagsContainer');
+    if (!container) return;
+
+    // Tags zählen
+    const counts = {};
+    dives.forEach(d => {
+      if (!d.tags || !d.tags.length) return;
+      d.tags.forEach(t => { counts[t] = (counts[t] || 0) + 1; });
+    });
+    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+    if (!entries.length) {
+      container.innerHTML = '<div class="chart-empty">Noch keine Tags vergeben.</div>';
+      return;
+    }
+
+    const total = entries.reduce((s, [, v]) => s + v, 0);
+
+    // Meeres-Palette (abgestimmte Töne)
+    const PALETTE = [
+      '#0a2342','#1a4a7a','#2e86ab','#3dbdc4','#6dcfd4',
+      '#9ddfe2','#0d6b8a','#14536e','#5a9cb8','#a8d8e8'
+    ];
+
+    // Layout
+    const DPR      = window.devicePixelRatio || 1;
+    const W        = container.clientWidth || 300;
+    const H        = Math.max(140, Math.min(180, entries.length * 26 + 20));
+    const PAD_LEFT = 16;
+    const DONUT_R  = Math.min(H / 2 - 8, 62);
+    const DONUT_X  = PAD_LEFT + DONUT_R;
+    const LEG_X    = PAD_LEFT + DONUT_R * 2 + 20;
+    const LEG_W    = W - LEG_X - 12;
+    const CY        = H / 2;
+
+    const canvas = document.createElement('canvas');
+    canvas.width  = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    canvas.className = 'chart-canvas';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(DPR, DPR);
+
+    // Donut zeichnen
+    let angle = -Math.PI / 2;
+    entries.forEach(([, count], i) => {
+      const slice = (count / total) * Math.PI * 2;
+      ctx.fillStyle = PALETTE[i % PALETTE.length];
+      ctx.beginPath();
+      ctx.moveTo(DONUT_X, CY);
+      ctx.arc(DONUT_X, CY, DONUT_R, angle, angle + slice);
+      ctx.closePath();
+      ctx.fill();
+      angle += slice;
+    });
+
+    // Donut-Loch (weißer Kreis)
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(DONUT_X, CY, DONUT_R * 0.52, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Gesamt-Zahl im Loch
+    ctx.fillStyle    = 'rgba(10,35,66,0.6)';
+    ctx.font         = `bold 13px system-ui, sans-serif`;
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(total, DONUT_X, CY);
+
+    // Legende rechts
+    const ROW = 22;
+    const startY = CY - (entries.length * ROW) / 2 + ROW / 2;
+    entries.forEach(([label, count], i) => {
+      const y   = startY + i * ROW;
+      const pct = Math.round((count / total) * 100);
+
+      // Farbpunkt
+      ctx.fillStyle = PALETTE[i % PALETTE.length];
+      ctx.beginPath();
+      ctx.arc(LEG_X + 6, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Label (kürzen falls nötig)
+      ctx.fillStyle    = 'rgba(10,35,66,0.75)';
+      ctx.font         = `12px system-ui, sans-serif`;
+      ctx.textAlign    = 'left';
+      ctx.textBaseline = 'middle';
+      const maxLblW = LEG_W - 38;
+      let lbl = label;
+      while (ctx.measureText(lbl + '…').width > maxLblW && lbl.length > 1) lbl = lbl.slice(0, -1);
+      if (lbl !== label) lbl += '…';
+      ctx.fillText(lbl, LEG_X + 16, y);
+
+      // Prozent rechts
+      ctx.fillStyle = 'rgba(10,35,66,0.4)';
+      ctx.font      = `11px system-ui, sans-serif`;
+      ctx.textAlign = 'right';
+      ctx.fillText(pct + '%', W - 12, y);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(canvas);
+  }
+
+  // ── Diagramm: Häufigste Tauchpartner (horizontal) ───────
+  function renderChartBuddy(dives) {
+    const container = document.getElementById('chartBuddyContainer');
+    if (!container) return;
+
+    const counts = {};
+    dives.forEach(d => {
+      const b = (d.buddy || '').trim();
+      if (!b) return;
+      counts[b] = (counts[b] || 0) + 1;
+    });
+
+    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+    if (!entries.length) {
+      container.innerHTML = '<div class="chart-empty">Noch keine Buddy-Einträge vorhanden.</div>';
+      return;
+    }
+
+    const DPR    = window.devicePixelRatio || 1;
+    const W      = container.clientWidth || 300;
+    const PAD_L  = 4;
+    const PAD_R  = 36;
+    const ROW_H  = 48;
+    const BAR_H  = 16;
+    const n      = entries.length;
+    const H      = 8 + n * ROW_H + 4;
+    const maxVal = entries[0][1];
+    const innerW = W - PAD_L - PAD_R;
+
+    const COLORS = ['#0a2342','#1a4a7a','#2e86ab','#3dbdc4','#6dcfd4'];
+
+    const canvas = document.createElement('canvas');
+    canvas.width  = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    canvas.className = 'chart-canvas';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(DPR, DPR);
+
+    entries.forEach(([label, count], i) => {
+      const rowY = 8 + i * ROW_H;
+      const barW = Math.max(4, (count / maxVal) * innerW);
+      const barY = rowY + 20;
+
+      // Name oben, linksbündig
+      ctx.fillStyle    = 'rgba(10,35,66,0.72)';
+      ctx.font         = '13px system-ui, sans-serif';
+      ctx.textAlign    = 'left';
+      ctx.textBaseline = 'top';
+      const lbl = label.length > 10 ? label.slice(0, 10) + '…' : label;
+      ctx.fillText(lbl, PAD_L, rowY + 2);
+
+      // Balken darunter, gleicher linker Abstand, volle Breite
+      ctx.fillStyle = COLORS[i] || COLORS[COLORS.length - 1];
+      ctx.beginPath();
+      ctx.roundRect(PAD_L, barY, barW, BAR_H, 4);
+      ctx.fill();
+
+      // Anzahl am Ende des Balkens
+      ctx.fillStyle    = 'rgba(10,35,66,0.45)';
+      ctx.font         = 'bold 11px system-ui, sans-serif';
+      ctx.textAlign    = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(count, PAD_L + barW + 6, barY + BAR_H / 2);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(canvas);
+  }
+
+  // ── Länderflaggen ────────────────────────────────────────
+  const COUNTRY_CODES = {
+    'afghanistan':'AF','ägypten':'EG','albanien':'AL','algerien':'DZ','angola':'AO',
+    'argentinien':'AR','armenien':'AM','australien':'AU','österreich':'AT',
+    'aserbaidschan':'AZ','bahamas':'BS','bahrain':'BH','bangladesch':'BD',
+    'belgien':'BE','belize':'BZ','benin':'BJ','bolivien':'BO','bosnien':'BA',
+    'botswana':'BW','brasilien':'BR','brunei':'BN','bulgarien':'BG','burkina faso':'BF',
+    'chile':'CL','china':'CN','costa rica':'CR','cuba':'CU','kuba':'CU',
+    'dänemark':'DK','deutschland':'DE','dominikanische republik':'DO',
+    'ecuador':'EC','el salvador':'SV','estland':'EE','eswatini':'SZ',
+    'fidschi':'FJ','finnland':'FI','frankreich':'FR','gabun':'GA','gambia':'GM',
+    'georgien':'GE','ghana':'GH','griechenland':'GR','guatemala':'GT',
+    'guinea':'GN','haiti':'HT','honduras':'HN','indien':'IN','indonesien':'ID',
+    'irak':'IQ','iran':'IR','irland':'IE','island':'IS','israel':'IL',
+    'italien':'IT','jamaika':'JM','japan':'JP','jemen':'YE','jordanien':'JO',
+    'kambodscha':'KH','kamerun':'CM','kanada':'CA','kap verde':'CV',
+    'kasachstan':'KZ','kenia':'KE','kolumbien':'CO','komoren':'KM',
+    'kroatien':'HR','kuba':'CU','kuwait':'KW','laos':'LA','lettland':'LV',
+    'libanon':'LB','libyen':'LY','litauen':'LT','luxemburg':'LU',
+    'madagaskar':'MG','malawi':'MW','malaysia':'MY','malediven':'MV',
+    'mali':'ML','malta':'MT','marokko':'MA','mauretanien':'MR','mauritius':'MU',
+    'mexiko':'MX','moldau':'MD','mongolei':'MN','montenegro':'ME',
+    'mosambik':'MZ','myanmar':'MM','namibia':'NA','nepal':'NP',
+    'neuseeland':'NZ','nicaragua':'NI','niederlande':'NL','niger':'NE',
+    'nigeria':'NG','nordmazedonien':'MK','norwegen':'NO','oman':'OM',
+    'pakistan':'PK','panama':'PA','papua-neuguinea':'PG','paraguay':'PY',
+    'peru':'PE','philippinen':'PH','polen':'PL','portugal':'PT',
+    'qatar':'QA','katar':'QA','ruanda':'RW','rumänien':'RO','russland':'RU',
+    'sambia':'ZM','saudi-arabien':'SA','schweden':'SE','schweiz':'CH',
+    'senegal':'SN','serbien':'RS','seychellen':'SC','sierra leone':'SL',
+    'simbabwe':'ZW','singapur':'SG','slowakei':'SK','slowenien':'SI',
+    'somalia':'SO','spanien':'ES','sri lanka':'LK','südafrika':'ZA',
+    'südkorea':'KR','sudan':'SD','syrien':'SY','tansania':'TZ',
+    'thailand':'TH','togo':'TG','tonga':'TO','trinidad und tobago':'TT',
+    'tschechien':'CZ','tunesien':'TN','türkei':'TR','uganda':'UG',
+    'ukraine':'UA','ungarn':'HU','uruguay':'UY','usa':'US',
+    'usbekistan':'UZ','venezuela':'VE','vereinigte arabische emirate':'AE',
+    'vae':'AE','vietnam':'VN','weißrussland':'BY','zypern':'CY',
+  };
+
+  function countryFlag(name) {
+    if (!name) return '';
+    const code = COUNTRY_CODES[name.trim().toLowerCase()];
+    if (!code) return '';
+    return [...code.toUpperCase()].map(c => String.fromCodePoint(0x1F1E6 - 65 + c.charCodeAt(0))).join('');
+  }
+
+  function updateCountryDatalist() {
+    const dives = loadDives();
+    const seen  = [...new Set(dives.map(d => d.country).filter(Boolean))];
+    const dl    = document.getElementById('countryList');
+    if (dl) dl.innerHTML = seen.map(c => `<option value="${escapeHtml(c)}">`).join('');
   }
 
   // ── Liste rendern ────────────────────────────────────────
@@ -1586,11 +2370,13 @@
     sorted.forEach(dive => {
       const card = document.createElement('div');
       card.className    = 'dive-card';
+      card.dataset.id    = String(dive.id);
       card.dataset.site  = (dive.site  || '').toLowerCase();
       card.dataset.buddy = (dive.buddy || '').toLowerCase();
+      const flag = countryFlag(dive.country);
       card.innerHTML = `
         <div class="dive-card-header">
-          <div class="card-main-info">
+          <div class="card-main-info"${flag ? ' style="padding-right:110px"' : ''}>
             <span class="dive-nr">${dive.nr || '–'}</span>
             <div class="card-text-info">
               <span class="dive-title">${dive.site}</span>
@@ -1598,12 +2384,12 @@
             </div>
           </div>
           ${dive.tags && dive.tags.length ? `<div class="card-tags">${dive.tags.map(t => `<span class="tag-badge" style="background:${tagColor(t)}">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+          ${flag ? `
+          <div class="card-country">
+            <span class="card-country-flag">${flag}</span>
+            <span class="card-country-name">${escapeHtml(dive.country)}</span>
+          </div>` : ''}
         </div>
-        ${dive.highlights ? `
-        <div class="dive-highlights">
-          <div class="dive-highlights-label">🐠 Highlights / gesehene Meereslebewesen</div>
-          <div class="dive-highlights-text">${escapeHtml(dive.highlights)}</div>
-        </div>` : ''}
         <div class="dive-card-body">
           ${f('Max. Tiefe',  dive.depth    ? dive.depth + ' m'      : '')}
           ${f('Tauchzeit',   dive.duration ? dive.duration + ' min'  : '')}
@@ -1613,17 +2399,22 @@
           ${f('Flasche',     dive.tank   ? dive.tank   + ' L'  : '')}
           ${f('Bleigewicht', dive.weight ? dive.weight + ' kg' : '')}
           ${f('Kleidung',    dive.suit   || '')}
+          ${dive.sightings && dive.sightings.length ? `
+          <div class="dive-field dive-notes">
+            <span class="dive-field-label">🐠 Gesehene Meereslebewesen</span>
+            <div class="sighting-chips">${dive.sightings.map(s => `<span class="sighting-chip">${escapeHtml(s)}</span>`).join('')}</div>
+          </div>` : ''}
           ${dive.notes ? `
           <div class="dive-field dive-notes">
             <span class="dive-field-label">Notizen</span>
             <span class="dive-field-value">${escapeHtml(dive.notes)}</span>
           </div>` : ''}
         </div>
-        ${dive.photos && dive.photos.length ? `
-        <div class="card-photos">
-          ${dive.photos.map((src, i) => `<img src="${src}" class="card-photo-thumb" alt="Foto ${i + 1}" onclick="openPhotoViewer('${dive.id}', ${i})" />`).join('')}
-        </div>` : ''}
         <div class="card-footer">
+          ${dive.photos && dive.photos.length ? `
+          <div class="card-photo-stack" onclick="openPhotoViewer('${dive.id}', 0)" aria-label="${dive.photos.length} Foto${dive.photos.length > 1 ? 's' : ''}">
+            ${dive.photos.slice(0, 3).reverse().map((src, i) => `<img src="${src}" alt="Foto" />`).join('')}
+          </div>` : '<div></div>'}
           <div class="card-actions" id="actions-${dive.id}">
             ${actionButtonsHTML(dive.id)}
           </div>
@@ -1637,6 +2428,81 @@
 
   // ── Suche & Filter ───────────────────────────────────────
   let searchQuery = '';
+
+  // ── Filter-State ─────────────────────────────────────────
+  let activeFilters = { countries: [], sightings: [], tags: [], buddies: [] };
+
+  function openFilterOverlay() {
+    populateFilterOverlay();
+    applyFilter();
+    document.getElementById('filterOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeFilterOverlay() {
+    document.getElementById('filterOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function populateFilterOverlay() {
+    const dives = loadDives();
+
+    const allCountries = [...new Set(dives.map(d => d.country).filter(Boolean))].sort();
+    const allSightings = [...new Set(dives.flatMap(d => d.sightings || []))].sort();
+    const allTags      = [...new Set(dives.flatMap(d => d.tags || []))].sort();
+    const allBuddies   = [...new Set(dives.map(d => d.buddy).filter(Boolean))].sort();
+
+    function buildChips(containerId, items, activeList, filterKey) {
+      const el = document.getElementById(containerId);
+      if (!items.length) {
+        el.innerHTML = '<span style="font-size:0.8rem;color:var(--text-muted);opacity:0.7">Keine Daten vorhanden</span>';
+        return;
+      }
+      el.innerHTML = items.map(item => {
+        const isActive = activeList.includes(item);
+        const flag = filterKey === 'countries' ? countryFlag(item) + ' ' : '';
+        return `<button type="button" class="filter-chip${isActive ? ' active' : ''}" data-key="${filterKey}" data-value="${escapeHtml(item)}">${flag}${escapeHtml(item)}</button>`;
+      }).join('');
+      el.querySelectorAll('.filter-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const list = activeFilters[btn.dataset.key];
+          const val  = btn.dataset.value;
+          const idx  = list.indexOf(val);
+          if (idx === -1) list.push(val); else list.splice(idx, 1);
+          btn.classList.toggle('active', list.includes(val));
+          applyFilter();
+        });
+      });
+    }
+
+    buildChips('filterCountryChips',  allCountries, activeFilters.countries, 'countries');
+    buildChips('filterSightingChips', allSightings, activeFilters.sightings, 'sightings');
+    buildChips('filterTagChips',      allTags,      activeFilters.tags,      'tags');
+    buildChips('filterBuddyChips',    allBuddies,   activeFilters.buddies,   'buddies');
+  }
+
+  function toggleFilterChip(key, value, btn) {
+    const list = activeFilters[key];
+    const idx  = list.indexOf(value);
+    if (idx === -1) list.push(value);
+    else list.splice(idx, 1);
+    btn.classList.toggle('active', list.includes(value));
+    applyFilter();
+  }
+
+  function resetFilters() {
+    activeFilters = { countries: [], sightings: [], tags: [], buddies: [] };
+    ['filterDepthMin','filterDepthMax','filterDurMin','filterDurMax','filterTempMin','filterTempMax']
+      .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    populateFilterOverlay();
+    applyFilter();
+  }
+
+  function hasActiveFilters() {
+    if (Object.values(activeFilters).some(a => a.length)) return true;
+    return ['filterDepthMin','filterDepthMax','filterDurMin','filterDurMax','filterTempMin','filterTempMax']
+      .some(id => { const el = document.getElementById(id); return el && el.value !== ''; });
+  }
 
   function filterDives() {
     const input = document.getElementById('searchInput');
@@ -1654,20 +2520,76 @@
   }
 
   function applyFilter() {
-    const q     = searchQuery.toLowerCase();
+    const q    = searchQuery.toLowerCase();
+    const f    = activeFilters;
+    const dMin = parseFloat(document.getElementById('filterDepthMin')?.value) || null;
+    const dMax = parseFloat(document.getElementById('filterDepthMax')?.value) || null;
+    const rMin = parseFloat(document.getElementById('filterDurMin')?.value)   || null;
+    const rMax = parseFloat(document.getElementById('filterDurMax')?.value)   || null;
+    const tMin = parseFloat(document.getElementById('filterTempMin')?.value)  || null;
+    const tMax = parseFloat(document.getElementById('filterTempMax')?.value)  || null;
+
+    const dives = loadDives();
+    const diveMap = Object.fromEntries(dives.map(d => [String(d.id), d]));
+
     const cards = document.querySelectorAll('#divesList .dive-card');
-    let   shown = 0;
+    let shown = 0;
 
     cards.forEach(card => {
-      const match = !q || card.dataset.site.includes(q) || card.dataset.buddy.includes(q);
-      card.style.display = match ? '' : 'none';
-      if (match) shown++;
+      const dive = diveMap[card.dataset.id];
+      if (!dive) { card.style.display = 'none'; return; }
+
+      let ok = true;
+
+      // Freitext-Suche
+      if (q && !card.dataset.site.includes(q) && !card.dataset.buddy.includes(q)) ok = false;
+
+      // Länder
+      if (ok && f.countries.length && !f.countries.includes(dive.country || '')) ok = false;
+
+      // Meereslebewesen (mind. eins der gewählten muss vorhanden sein)
+      if (ok && f.sightings.length) {
+        const ds = dive.sightings || [];
+        if (!f.sightings.some(s => ds.includes(s))) ok = false;
+      }
+
+      // Tags
+      if (ok && f.tags.length) {
+        const dt = dive.tags || [];
+        if (!f.tags.some(t => dt.includes(t))) ok = false;
+      }
+
+      // Buddy
+      if (ok && f.buddies.length && !f.buddies.includes(dive.buddy || '')) ok = false;
+
+      // Tiefe
+      if (ok && dMin !== null && (parseFloat(dive.depth) || 0) < dMin) ok = false;
+      if (ok && dMax !== null && (parseFloat(dive.depth) || 0) > dMax) ok = false;
+
+      // Tauchzeit
+      if (ok && rMin !== null && (parseFloat(dive.duration) || 0) < rMin) ok = false;
+      if (ok && rMax !== null && (parseFloat(dive.duration) || 0) > rMax) ok = false;
+
+      // Temperatur
+      if (ok && tMin !== null && (parseFloat(dive.temp) || 0) < tMin) ok = false;
+      if (ok && tMax !== null && (parseFloat(dive.temp) || 0) > tMax) ok = false;
+
+      card.style.display = ok ? '' : 'none';
+      if (ok) shown++;
     });
 
-    const hint      = document.getElementById('searchHint');
-    const noResults = document.getElementById('noResults');
-    hint.textContent            = q ? `${shown} von ${cards.length} Tauchgängen` : '';
-    noResults.style.display     = (q && shown === 0) ? 'block' : 'none';
+    const anyFilter  = q || hasActiveFilters();
+    const hint       = document.getElementById('searchHint');
+    const noResults  = document.getElementById('noResults');
+    const dot        = document.getElementById('filterActiveDot');
+    const countEl    = document.getElementById('filterResultCount');
+
+    hint.textContent           = anyFilter ? `${shown} von ${cards.length} Tauchgängen` : '';
+    noResults.style.display    = (anyFilter && shown === 0) ? 'block' : 'none';
+    if (dot)     dot.style.display = hasActiveFilters() ? 'block' : 'none';
+    if (countEl) countEl.textContent = hasActiveFilters()
+      ? `${shown} von ${cards.length} Tauchgängen entsprechen den Filtern`
+      : 'Keine Filter aktiv – alle Tauchgänge werden angezeigt';
   }
 
   // ── HTML escapen (Sicherheit) ────────────────────────────
@@ -1691,6 +2613,7 @@
 
     document.getElementById('date').value       = '';
     document.getElementById('site').value       = dive.site       || '';
+    document.getElementById('country').value    = dive.country    || '';
     document.getElementById('depth').value      = dive.depth      || '';
     document.getElementById('duration').value   = dive.duration   || '';
     document.getElementById('temp').value       = dive.temp       || '';
@@ -1699,8 +2622,8 @@
     document.getElementById('tank').value       = dive.tank       || '';
     document.getElementById('weight').value     = dive.weight     || '';
     document.getElementById('suit').value       = dive.suit       || '';
-    document.getElementById('highlights').value = '';
-    document.getElementById('notes').value      = '';
+    clearSightings();
+    document.getElementById('notes').value = '';
 
     selectedTags   = [...(dive.tags || [])];
     selectedPhotos = [];
@@ -1720,6 +2643,7 @@
 
     document.getElementById('date').value       = dive.date       || '';
     document.getElementById('site').value       = dive.site       || '';
+    document.getElementById('country').value    = dive.country    || '';
     document.getElementById('depth').value      = dive.depth      || '';
     document.getElementById('duration').value   = dive.duration   || '';
     document.getElementById('temp').value       = dive.temp       || '';
@@ -1728,8 +2652,9 @@
     document.getElementById('tank').value       = dive.tank       || '';
     document.getElementById('weight').value     = dive.weight     || '';
     document.getElementById('suit').value       = dive.suit       || '';
-    document.getElementById('highlights').value = dive.highlights || '';
-    document.getElementById('notes').value      = dive.notes      || '';
+    selectedSightings = [...(dive.sightings || [])];
+    renderSightingsUI();
+    document.getElementById('notes').value = dive.notes || '';
 
     selectedTags   = [...(dive.tags   || [])];
     selectedPhotos = [...(dive.photos || [])];
@@ -1798,6 +2723,7 @@
     const fields = {
       date:       date,
       site:       site,
+      country:    document.getElementById('country').value.trim(),
       depth:      document.getElementById('depth').value.trim(),
       duration:   document.getElementById('duration').value.trim(),
       temp:       document.getElementById('temp').value.trim(),
@@ -1806,7 +2732,7 @@
       tank:       document.getElementById('tank').value.trim(),
       weight:     document.getElementById('weight').value.trim(),
       suit:       document.getElementById('suit').value.trim(),
-      highlights: document.getElementById('highlights').value.trim(),
+      sightings:  [...selectedSightings],
       notes:      document.getElementById('notes').value.trim(),
       tags:       [...selectedTags],
       photos:     [...selectedPhotos],
@@ -1821,6 +2747,7 @@
       saveDives(dives);
       renumberDivesByDate();
       renderDives();
+      updateCountryDatalist();
       _resetFormState();
       closeForm();
       showToast('✓ Tauchgang aktualisiert!');
@@ -1829,6 +2756,7 @@
       saveDives(dives);
       renumberDivesByDate();
       renderDives();
+      updateCountryDatalist();
       this.reset();
       clearTags();
       clearPhotos();
@@ -1903,9 +2831,21 @@
   renderDives();
   fillNextNr();
   renderTagUI();
+  updateCountryDatalist();
 
   document.getElementById('tagCustomInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); addCustomTag(); }
+  });
+
+  document.getElementById('sightingsInput').addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      commitSightingInput();
+    }
+  });
+
+  document.getElementById('sightingsInput').addEventListener('blur', () => {
+    if (document.getElementById('sightingsInput').value.trim()) commitSightingInput();
   });
 
   document.getElementById('modalOverlay').addEventListener('click', e => {
@@ -1913,9 +2853,14 @@
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && document.getElementById('modalOverlay').classList.contains('active')) {
-      closeForm();
+    if (e.key === 'Escape') {
+      if (document.getElementById('filterOverlay').classList.contains('active')) closeFilterOverlay();
+      else if (document.getElementById('modalOverlay').classList.contains('active')) closeForm();
     }
+  });
+
+  document.getElementById('filterOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('filterOverlay')) closeFilterOverlay();
   });
 
   function toggleBackupPopover(e) {
@@ -1940,12 +2885,47 @@
 
   function openPhotoViewer(diveId, index) {
     const dive = loadDives().find(d => String(d.id) === String(diveId));
-    if (!dive || !dive.photos) return;
+    if (!dive || !dive.photos || !dive.photos.length) return;
+
     const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:500;display:flex;align-items:center;justify-content:center;cursor:zoom-out';
-    overlay.innerHTML = `<img src="${dive.photos[index]}" style="max-width:95vw;max-height:90vh;border-radius:8px;object-fit:contain" />`;
-    overlay.onclick = () => overlay.remove();
+    overlay.style.cssText = `
+      position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:500;
+      overflow-y:auto;overscroll-behavior:contain;
+      display:flex;flex-direction:column;align-items:center;
+      gap:12px;padding:16px 0 32px;
+    `;
+
+    overlay.innerHTML =
+      `<button onclick="this.closest('div').remove()" aria-label="Schließen" style="
+        position:fixed;top:16px;right:16px;z-index:501;
+        background:rgba(255,255,255,0.12);border:none;border-radius:50%;
+        width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+        color:#fff;cursor:pointer;backdrop-filter:blur(4px);
+        transition:background 0.18s;
+      " onmouseover="this.style.background='rgba(255,255,255,0.22)'"
+         onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+        <span class="material-symbols-outlined" style="font-size:22px">close</span>
+      </button>` +
+      dive.photos.map((src, i) =>
+        `<img src="${src}" data-idx="${i}" style="
+          width:min(95vw,600px);border-radius:10px;object-fit:contain;
+          flex-shrink:0;display:block;
+          opacity:0;transition:opacity 0.25s;
+        " onload="this.style.opacity=1" alt="Foto ${i+1}" />`
+      ).join('');
+
+    // Schließen per Klick auf den Hintergrund (nicht aufs Bild)
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+
+    // Schließen per Escape
+    const onKey = e => { if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', onKey); } };
+    document.addEventListener('keydown', onKey);
+
     document.body.appendChild(overlay);
+
+    // Zum angeklickten Foto scrollen
+    const target = overlay.querySelectorAll('img')[index];
+    if (target) setTimeout(() => target.scrollIntoView({ block: 'center' }), 20);
   }
 
   function navTo(section) {
@@ -1962,7 +2942,7 @@
 
     if (isStats) {
       const dives = loadDives();
-      setTimeout(() => { renderChartMonth(dives); renderChartDepth(dives); }, 30);
+      setTimeout(() => { renderChartMonth(dives); renderChartDepth(dives); renderChartSites(dives); renderChartCumTime(dives); renderChartTags(dives); renderChartBuddy(dives); }, 30);
     }
 
     if (section === 'profile') {
