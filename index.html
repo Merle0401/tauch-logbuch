@@ -1161,7 +1161,34 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.4rem;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
     }
+
+    .chips-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.6rem 0;
+      width: 100%;
+      text-align: left;
+      letter-spacing: 0.03em;
+      margin-top: 0.3rem;
+      font-family: inherit;
+      transition: color 0.15s;
+    }
+
+    .chips-toggle:hover { color: #ffffff; }
+
+    .chips-toggle-icon { font-size: 18px; transition: transform 0.2s; flex-shrink: 0; }
+
+    .chips-toggle.open .chips-toggle-icon { transform: rotate(180deg); }
 
     .filter-chip {
       font-size: 0.8rem;
@@ -1788,8 +1815,11 @@
 <!-- Filter-Overlay -->
 <div class="modal-overlay" id="filterOverlay" role="dialog" aria-modal="true">
   <div class="form-card" id="filterCard" style="max-width:520px">
-    <button class="modal-close" onclick="closeFilterOverlay()" aria-label="Filter schließen"><span class="material-symbols-outlined">close</span></button>
-    <h2 style="margin-bottom:1.5rem">Filter</h2>
+    <div class="form-card-header">
+      <h2>Filter</h2>
+      <button class="modal-close" onclick="closeFilterOverlay()" aria-label="Filter schließen"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="form-card-body">
 
     <div class="filter-section">
       <div class="filter-section-label">Land</div>
@@ -1845,6 +1875,7 @@
         <button type="button" style="flex:1;padding:0.75rem;background:linear-gradient(90deg,var(--ocean-light),var(--ocean-teal));color:var(--white);border:none;border-radius:8px;font-size:0.95rem;font-weight:600;font-family:inherit;cursor:pointer;letter-spacing:0.02em;transition:opacity 0.2s" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'" onclick="closeFilterOverlay()">Fertig</button>
       </div>
     </div>
+    </div><!-- /.form-card-body -->
   </div>
 </div>
 
@@ -2802,15 +2833,51 @@
   let activeFilters = { countries: [], sightings: [], tags: [], buddies: [] };
 
   function openFilterOverlay() {
-    populateFilterOverlay();
-    applyFilter();
     document.getElementById('filterOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
+    populateFilterOverlay();
+    applyFilter();
   }
 
   function closeFilterOverlay() {
     document.getElementById('filterOverlay').classList.remove('active');
     document.body.style.overflow = '';
+  }
+
+  // ── Pillen-Container auf 2 Reihen begrenzen, Rest per Dropdown ──
+  function collapseChipsIfNeeded(containerId) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+
+    const oldToggle = document.getElementById(containerId + 'Toggle');
+    if (oldToggle) oldToggle.remove();
+    el.classList.remove('chips-collapsed');
+    el.style.maxHeight = '';
+
+    const firstChip = el.querySelector('.filter-chip');
+    if (!firstChip) return;
+
+    const rowHeight = firstChip.offsetHeight;
+    const gap       = parseFloat(getComputedStyle(el).rowGap) || 0;
+    const twoRowsH  = rowHeight * 2 + gap;
+
+    if (el.scrollHeight <= twoRowsH + 1) return;
+
+    el.classList.add('chips-collapsed');
+    el.style.maxHeight = twoRowsH + 'px';
+
+    const toggle = document.createElement('button');
+    toggle.type      = 'button';
+    toggle.id        = containerId + 'Toggle';
+    toggle.className = 'chips-toggle';
+    toggle.innerHTML = '<span class="material-symbols-outlined chips-toggle-icon">expand_more</span><span class="chips-toggle-label">Mehr anzeigen</span>';
+    toggle.onclick = () => {
+      const collapsed = el.classList.toggle('chips-collapsed');
+      el.style.maxHeight = collapsed ? twoRowsH + 'px' : el.scrollHeight + 'px';
+      toggle.classList.toggle('open', !collapsed);
+      toggle.querySelector('.chips-toggle-label').textContent = collapsed ? 'Mehr anzeigen' : 'Weniger anzeigen';
+    };
+    el.insertAdjacentElement('afterend', toggle);
   }
 
   function populateFilterOverlay() {
@@ -2842,6 +2909,7 @@
           applyFilter();
         });
       });
+      collapseChipsIfNeeded(containerId);
     }
 
     buildChips('filterCountryChips',  allCountries, activeFilters.countries, 'countries');
