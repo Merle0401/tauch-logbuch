@@ -490,7 +490,7 @@
     .confirm-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(10,35,66,0.45);
+      background: rgba(13,20,32,0.8);
       z-index: 400;
       display: flex;
       align-items: center;
@@ -1058,19 +1058,19 @@
 
     .search-wrap input {
       padding: 0.5rem 2.2rem 0.5rem 2rem;
-      border: 1.5px solid #d0e3ef;
+      border: 1.5px solid var(--border);
       border-radius: 20px;
       font-size: 0.88rem;
       width: 100%;
-      background: var(--white);
-      color: var(--text-dark);
+      background: #2b3648;
+      color: #ffffff;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .search-wrap input:focus {
       outline: none;
       border-color: var(--ocean-teal);
-      box-shadow: 0 0 0 3px rgba(61,189,196,0.18);
+      box-shadow: 0 0 0 3px rgba(14,170,173,0.2);
     }
 
     .search-icon {
@@ -1083,7 +1083,7 @@
 
     .filter-icon-btn {
       position: relative;
-      background: rgba(10,35,66,0.06);
+      background: #161e2b;
       border: none;
       border-radius: 8px;
       width: 38px;
@@ -1091,13 +1091,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--ocean-mid);
+      color: rgba(255,255,255,0.8);
       cursor: pointer;
       flex-shrink: 0;
       transition: background 0.15s;
     }
 
-    .filter-icon-btn:hover { background: rgba(10,35,66,0.12); }
+    .filter-icon-btn:hover { background: #1d2a3d; }
 
     .filter-icon-btn .material-symbols-outlined { font-size: 20px; }
 
@@ -1159,16 +1159,16 @@
       font-weight: 600;
       padding: 0.25rem 0.7rem;
       border-radius: 20px;
-      border: 1.5px solid #d0e3ef;
-      background: var(--white);
+      border: 1.5px solid var(--border);
+      background: #2b3648;
       color: var(--text-muted);
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
 
     .filter-chip.active {
-      background: var(--ocean-mid);
-      border-color: var(--ocean-mid);
+      background: var(--ocean-teal);
+      border-color: var(--ocean-teal);
       color: var(--white);
     }
 
@@ -1181,11 +1181,11 @@
     .filter-range-input {
       flex: 1;
       padding: 0.45rem 0.65rem;
-      border: 1.5px solid #d0e3ef;
+      border: 1.5px solid var(--border);
       border-radius: 8px;
       font-size: 0.88rem;
       color: var(--text-dark);
-      background: var(--white);
+      background: #2b3648;
       transition: border-color 0.2s;
     }
 
@@ -1222,7 +1222,8 @@
 
     /* ── Statistik-Diagramme ─────────────────────────────── */
     .chart-section {
-      background: var(--white);
+      background: #161e2b;
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 1.25rem 1.25rem 1rem;
@@ -1261,9 +1262,9 @@
     }
 
     .chart-toggle-btn.active {
-      background: var(--white);
-      color: var(--ocean-mid);
-      box-shadow: 0 1px 4px rgba(10,35,66,0.1);
+      background: var(--accent);
+      color: #161e2b;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
     .chart-canvas {
@@ -1297,13 +1298,13 @@
       font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
-      border: 1.5px solid var(--ocean-mid);
+      border: 1.5px solid var(--border);
       font-family: inherit;
       transition: opacity 0.15s, background 0.15s;
     }
 
-    .btn-backup.export { background: var(--ocean-mid); color: var(--white); }
-    .btn-backup.import { background: transparent; color: var(--ocean-mid); }
+    .btn-backup.export { background: var(--ocean-teal); border-color: var(--ocean-teal); color: var(--white); }
+    .btn-backup.import { background: transparent; color: var(--accent); }
     .btn-backup:hover  { opacity: 0.8; }
 
     .storage-hint {
@@ -1338,10 +1339,10 @@
       position: absolute;
       top: calc(100% + 0.5rem);
       right: 0;
-      background: var(--white);
+      background: #161e2b;
       border-radius: var(--radius);
-      box-shadow: 0 8px 30px rgba(10,35,66,0.15);
-      border: 1px solid rgba(10,35,66,0.08);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
       padding: 1rem 1.1rem;
       width: 280px;
       z-index: 100;
@@ -1373,9 +1374,9 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: var(--white);
-      border-top: 1px solid rgba(10,35,66,0.08);
-      box-shadow: 0 -4px 20px rgba(10,35,66,0.08);
+      background: #161e2b;
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.35);
       display: flex;
       align-items: center;
       justify-content: space-around;
@@ -1408,7 +1409,7 @@
       flex-shrink: 0;
     }
 
-    .nav-btn.active { color: var(--ocean-teal); }
+    .nav-btn.active { color: var(--accent); }
     .nav-btn:hover  { color: var(--ocean-light); }
     .nav-btn:active { transform: scale(0.88); transition: transform 0.1s; }
 
@@ -1418,7 +1419,7 @@
       border-radius: 50%;
       background: linear-gradient(135deg, var(--ocean-light), var(--ocean-teal));
       color: var(--white) !important;
-      box-shadow: 0 4px 18px rgba(46,134,171,0.45);
+      box-shadow: 0 4px 18px rgba(14,170,173,0.45);
       margin-bottom: 18px;
       padding: 0;
       min-width: unset;
@@ -1428,7 +1429,7 @@
 
     .nav-center:hover {
       transform: scale(1.08) translateY(-2px);
-      box-shadow: 0 8px 24px rgba(46,134,171,0.55);
+      box-shadow: 0 8px 24px rgba(14,170,173,0.55);
     }
 
     .nav-center:active { transform: scale(0.94); }
@@ -1452,12 +1453,12 @@
       width: 100%;
       text-align: left;
       letter-spacing: 0.03em;
-      border-top: 1px solid var(--ocean-foam);
+      border-top: 1px solid var(--border);
       margin-top: 0.5rem;
       transition: color 0.15s;
     }
 
-    .details-toggle:hover { color: var(--ocean-mid); }
+    .details-toggle:hover { color: #ffffff; }
 
     .details-toggle-icon {
       font-size: 18px;
@@ -1497,12 +1498,12 @@
 
     .mood-btn .mood-emoji { font-size: 1.4rem; line-height: 1; }
 
-    .mood-btn:hover { border-color: var(--ocean-teal); color: var(--ocean-mid); }
+    .mood-btn:hover { border-color: var(--ocean-teal); color: #ffffff; }
 
     .mood-btn.selected {
-      border-color: var(--ocean-mid);
-      background: rgba(46,134,171,0.1);
-      color: var(--ocean-mid);
+      border-color: var(--ocean-teal);
+      background: rgba(14,170,173,0.15);
+      color: var(--accent);
     }
 
 
@@ -2171,7 +2172,7 @@
     const innerH = H - PAD.top  - PAD.bottom;
 
     // Gitternetz
-    ctx.strokeStyle = 'rgba(10,35,66,0.06)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
     ctx.lineWidth   = 1;
     [0.25, 0.5, 0.75, 1].forEach(f => {
       const y = PAD.top + innerH * (1 - f);
@@ -2191,14 +2192,14 @@
 
       // Wert oben
       if (values[i] > 0) {
-        ctx.fillStyle   = 'rgba(10,35,66,0.55)';
+        ctx.fillStyle   = 'rgba(255,255,255,0.75)';
         ctx.font        = `${11 * DPR / DPR}px system-ui, sans-serif`;
         ctx.textAlign   = 'center';
         ctx.fillText(values[i], x + barW / 2, y - 4);
       }
 
       // Label unten
-      ctx.fillStyle = 'rgba(10,35,66,0.45)';
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font      = `${10 * DPR / DPR}px system-ui, sans-serif`;
       ctx.textAlign = 'center';
       const maxLabelW = innerW / labels.length - 2;
@@ -2211,7 +2212,7 @@
     });
 
     // Y-Achse Beschriftung
-    ctx.fillStyle = 'rgba(10,35,66,0.35)';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
     ctx.font      = `10px system-ui, sans-serif`;
     ctx.textAlign = 'right';
     [0, Math.ceil(maxVal / 2), maxVal].forEach(v => {
@@ -2247,7 +2248,7 @@
     });
     const values = sorted.map(k => counts[k]);
 
-    drawBarChart('chartMonthContainer', labels, values, '#2e86ab');
+    drawBarChart('chartMonthContainer', labels, values, '#44d5ee');
   }
 
   // ── Diagramm: Top-Tauchplätze (horizontal) ──────────────
@@ -2292,7 +2293,7 @@
     const maxVal = entries[0][1];
     const innerW = W - PAD_L - PAD_R;
 
-    const COLORS = ['#1a4a7a','#2e86ab','#3dbdc4','#6dcfd4','#9ddfe2'];
+    const COLORS = ['#0eaaad','#26c4c9','#44d5ee','#7ddbee','#b3ecf5'];
 
     const canvas = document.createElement('canvas');
     canvas.width  = W * DPR;
@@ -2310,7 +2311,7 @@
       const barY = rowY + 20;
 
       // Name oben, linksbündig, max 12 Zeichen
-      ctx.fillStyle    = 'rgba(10,35,66,0.72)';
+      ctx.fillStyle    = 'rgba(255,255,255,0.85)';
       ctx.font         = '13px system-ui, sans-serif';
       ctx.textAlign    = 'left';
       ctx.textBaseline = 'top';
@@ -2324,7 +2325,7 @@
       ctx.fill();
 
       // Anzahl rechts vom Balken
-      ctx.fillStyle    = 'rgba(10,35,66,0.45)';
+      ctx.fillStyle    = 'rgba(255,255,255,0.6)';
       ctx.font         = 'bold 11px system-ui, sans-serif';
       ctx.textAlign    = 'left';
       ctx.textBaseline = 'middle';
@@ -2349,7 +2350,7 @@
       else                  bins[3]++;
     });
 
-    drawBarChart('chartDepthContainer', labels, bins, '#3dbdc4');
+    drawBarChart('chartDepthContainer', labels, bins, '#0eaaad');
   }
 
   // ── Diagramm: Kumulative Tauchzeit ──────────────────────
@@ -2399,13 +2400,13 @@
     function py(v) { return PAD.top  + innerH - (v / maxY) * innerH; }
 
     // Gridlines (3 Stufen)
-    ctx.strokeStyle = 'rgba(10,35,66,0.07)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
     ctx.lineWidth   = 1;
     [0.25, 0.5, 0.75, 1].forEach(f => {
       const yy = PAD.top + innerH - f * innerH;
       ctx.beginPath(); ctx.moveTo(PAD.left, yy); ctx.lineTo(W - PAD.right, yy); ctx.stroke();
       // Y-Label
-      ctx.fillStyle    = 'rgba(10,35,66,0.4)';
+      ctx.fillStyle    = 'rgba(255,255,255,0.5)';
       ctx.font         = `10px system-ui, sans-serif`;
       ctx.textAlign    = 'right';
       ctx.textBaseline = 'middle';
@@ -2414,8 +2415,8 @@
 
     // Gefüllte Fläche unter der Linie
     const grad = ctx.createLinearGradient(0, PAD.top, 0, PAD.top + innerH);
-    grad.addColorStop(0,   'rgba(61,189,196,0.35)');
-    grad.addColorStop(1,   'rgba(61,189,196,0.02)');
+    grad.addColorStop(0,   'rgba(68,213,238,0.35)');
+    grad.addColorStop(1,   'rgba(68,213,238,0.02)');
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.moveTo(px(0), PAD.top + innerH);
@@ -2425,7 +2426,7 @@
     ctx.fill();
 
     // Linie
-    ctx.strokeStyle = '#2e86ab';
+    ctx.strokeStyle = '#44d5ee';
     ctx.lineWidth   = 2.5;
     ctx.lineJoin    = 'round';
     ctx.beginPath();
@@ -2434,18 +2435,18 @@
 
     // Punkte
     points.forEach((p, i) => {
-      ctx.fillStyle = '#2e86ab';
+      ctx.fillStyle = '#44d5ee';
       ctx.beginPath();
       ctx.arc(px(i), py(p.cum), 3.5, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = '#161e2b';
       ctx.beginPath();
       ctx.arc(px(i), py(p.cum), 1.8, 0, Math.PI * 2);
       ctx.fill();
     });
 
     // X-Achse: erstes und letztes Datum
-    ctx.fillStyle    = 'rgba(10,35,66,0.45)';
+    ctx.fillStyle    = 'rgba(255,255,255,0.6)';
     ctx.font         = `10px system-ui, sans-serif`;
     ctx.textBaseline = 'top';
     const fmtShort = iso => { const [y,m,d] = iso.split('-'); return `${d}.${m}.${y.slice(2)}`; };
@@ -2478,12 +2479,6 @@
 
     const total = entries.reduce((s, [, v]) => s + v, 0);
 
-    // Meeres-Palette (abgestimmte Töne)
-    const PALETTE = [
-      '#0a2342','#1a4a7a','#2e86ab','#3dbdc4','#6dcfd4',
-      '#9ddfe2','#0d6b8a','#14536e','#5a9cb8','#a8d8e8'
-    ];
-
     // Layout
     const DPR      = window.devicePixelRatio || 1;
     const W        = container.clientWidth || 300;
@@ -2506,9 +2501,9 @@
 
     // Donut zeichnen
     let angle = -Math.PI / 2;
-    entries.forEach(([, count], i) => {
+    entries.forEach(([label, count]) => {
       const slice = (count / total) * Math.PI * 2;
-      ctx.fillStyle = PALETTE[i % PALETTE.length];
+      ctx.fillStyle = tagColor(label);
       ctx.beginPath();
       ctx.moveTo(DONUT_X, CY);
       ctx.arc(DONUT_X, CY, DONUT_R, angle, angle + slice);
@@ -2517,14 +2512,14 @@
       angle += slice;
     });
 
-    // Donut-Loch (weißer Kreis)
-    ctx.fillStyle = '#fff';
+    // Donut-Loch (passend zum Karten-Hintergrund)
+    ctx.fillStyle = '#161e2b';
     ctx.beginPath();
     ctx.arc(DONUT_X, CY, DONUT_R * 0.52, 0, Math.PI * 2);
     ctx.fill();
 
     // Gesamt-Zahl im Loch
-    ctx.fillStyle    = 'rgba(10,35,66,0.6)';
+    ctx.fillStyle    = 'rgba(255,255,255,0.85)';
     ctx.font         = `bold 13px system-ui, sans-serif`;
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
@@ -2538,13 +2533,13 @@
       const pct = Math.round((count / total) * 100);
 
       // Farbpunkt
-      ctx.fillStyle = PALETTE[i % PALETTE.length];
+      ctx.fillStyle = tagColor(label);
       ctx.beginPath();
       ctx.arc(LEG_X + 6, y, 5, 0, Math.PI * 2);
       ctx.fill();
 
       // Label (kürzen falls nötig)
-      ctx.fillStyle    = 'rgba(10,35,66,0.75)';
+      ctx.fillStyle    = 'rgba(255,255,255,0.85)';
       ctx.font         = `12px system-ui, sans-serif`;
       ctx.textAlign    = 'left';
       ctx.textBaseline = 'middle';
@@ -2555,7 +2550,7 @@
       ctx.fillText(lbl, LEG_X + 16, y);
 
       // Prozent rechts
-      ctx.fillStyle = 'rgba(10,35,66,0.4)';
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
       ctx.font      = `11px system-ui, sans-serif`;
       ctx.textAlign = 'right';
       ctx.fillText(pct + '%', W - 12, y);
@@ -2595,7 +2590,7 @@
     const maxVal = entries[0][1];
     const innerW = W - PAD_L - PAD_R;
 
-    const COLORS = ['#0a2342','#1a4a7a','#2e86ab','#3dbdc4','#6dcfd4'];
+    const COLORS = ['#0eaaad','#26c4c9','#44d5ee','#7ddbee','#b3ecf5'];
 
     const canvas = document.createElement('canvas');
     canvas.width  = W * DPR;
@@ -2612,7 +2607,7 @@
       const barY = rowY + 20;
 
       // Name oben, linksbündig
-      ctx.fillStyle    = 'rgba(10,35,66,0.72)';
+      ctx.fillStyle    = 'rgba(255,255,255,0.85)';
       ctx.font         = '13px system-ui, sans-serif';
       ctx.textAlign    = 'left';
       ctx.textBaseline = 'top';
@@ -2626,7 +2621,7 @@
       ctx.fill();
 
       // Anzahl am Ende des Balkens
-      ctx.fillStyle    = 'rgba(10,35,66,0.45)';
+      ctx.fillStyle    = 'rgba(255,255,255,0.6)';
       ctx.font         = 'bold 11px system-ui, sans-serif';
       ctx.textAlign    = 'left';
       ctx.textBaseline = 'middle';
