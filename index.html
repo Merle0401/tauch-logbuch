@@ -7,6 +7,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" integrity="sha384-ZaR6mWzmJtrRibZ1Vm7SoHFr8OXjyAuGAXalGDKqbxFT18oi/z+oZLIRFkpeNor1" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" integrity="sha384-I1LYojsZ5RM1cOda44Z2h42Qa6YfsQ1XkXxREnhp4ueYBR/4d1pG1K+NZM537Vsj" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" integrity="sha384-Ke0FJhH7LyRqDxZ0wt+/OXV38yfQVu7g9VPEEGjYmB4RVOY/ta04uecRhsMwT7V3" crossorigin="anonymous"></script>
   <style>
     /* ── Material Icons ──────────────────────────────────── */
     .material-symbols-outlined {
@@ -1759,6 +1762,47 @@
       .splash-turtle, .splash-bubble { display: none; }
       .splash-logo { animation: none; }
     }
+
+    /* ── Login-Gate ───────────────────────────────────────── */
+    .auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+      background: linear-gradient(160deg, #0d1420 0%, #161e2b 55%, #0d1420 100%);
+    }
+
+    .auth-card { max-width: 380px; width: 100%; }
+
+    .auth-error {
+      background: rgba(224,82,82,0.12);
+      border: 1px solid rgba(224,82,82,0.4);
+      color: #ff9c9c;
+      font-size: 0.85rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    .auth-link {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      cursor: pointer;
+      padding: 0.6rem 0 0;
+      font-family: inherit;
+      transition: color 0.15s;
+    }
+
+    .auth-link:hover { color: #ffffff; }
   </style>
 </head>
 <body>
@@ -1777,6 +1821,36 @@
   <div class="splash-turtle t2 flip"><img src="turtle-splash.png" class="splash-turtle-img" alt="" /></div>
   <div class="splash-turtle t3"><img src="turtle-splash.png" class="splash-turtle-img" alt="" /></div>
   <h1 class="splash-logo">DiveDeck.</h1>
+</div>
+
+<div class="auth-gate" id="authGate">
+  <div class="form-card auth-card">
+    <div class="form-card-header">
+      <h2 id="authTitle">Anmelden</h2>
+    </div>
+    <div class="form-card-body">
+      <div class="auth-error" id="authError" style="display:none"></div>
+      <form id="authForm">
+        <div class="form-grid">
+          <div class="field full-width">
+            <label for="authEmail">E-Mail</label>
+            <input type="email" id="authEmail" required autocomplete="email" />
+          </div>
+          <div class="field full-width">
+            <label for="authPassword">Passwort</label>
+            <input type="password" id="authPassword" required autocomplete="current-password" minlength="6" />
+          </div>
+          <div class="field full-width" id="authPasswordConfirmField" style="display:none">
+            <label for="authPasswordConfirm">Passwort wiederholen</label>
+            <input type="password" id="authPasswordConfirm" autocomplete="new-password" minlength="6" />
+          </div>
+        </div>
+        <button type="submit" class="btn-add" id="authSubmitBtn">Anmelden</button>
+      </form>
+      <button type="button" class="auth-link" id="authToggleModeBtn" onclick="toggleAuthMode()">Noch kein Konto? Registrieren</button>
+      <button type="button" class="auth-link" onclick="handlePasswordReset()">Passwort vergessen?</button>
+    </div>
+  </div>
 </div>
 
 <header>
@@ -1858,6 +1932,18 @@
     <div class="empty-state" id="mapEmptyState" style="display:none">
       <div class="icon">🗺️</div>
       <p>Noch keine Tauchgänge mit gespeichertem Standort.<br>Füge beim nächsten Eintrag im Formular einen Standort hinzu.</p>
+    </div>
+  </div>
+
+  <!-- Seite: Profil -->
+  <div id="pageProfile" style="display:none">
+    <div class="section-title">👤 Profil</div>
+    <div class="form-card" style="max-width:420px;margin:0 auto">
+      <div class="form-card-body">
+        <p style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Angemeldet als</p>
+        <p id="profileEmail" style="font-size:1.1rem;font-weight:600;margin:0.35rem 0 1.5rem"></p>
+        <button type="button" class="btn-add" style="background:var(--danger)" onclick="auth.signOut()">Abmelden</button>
+      </div>
     </div>
   </div>
 
@@ -2134,6 +2220,16 @@
   </div>
 </div>
 
+<div class="confirm-overlay" id="migrationOverlay" style="display:none" role="dialog" aria-modal="true">
+  <div class="confirm-dialog">
+    <p>Du hast <span id="migrationCount"></span> Tauchgänge auf diesem Gerät gespeichert.<br>Jetzt in dein neues Konto hochladen?</p>
+    <div class="confirm-actions">
+      <button class="btn-confirm-no" onclick="declineMigration()">Nein danke</button>
+      <button class="btn-confirm-yes" onclick="acceptMigration()">Ja, hochladen</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -2161,6 +2257,96 @@
       }, { once: true });
     }, 3000);
   })();
+
+  // ══════════════════════════════════════════════════════════
+  // FIREBASE-KONFIGURATION
+  // Firebase-Konsole → Projekteinstellungen (Zahnrad) → "Meine Apps"
+  // → Web-App auswählen → SDK-Konfiguration → hierher kopieren.
+  // ══════════════════════════════════════════════════════════
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDvdy5VbSNVJvHatZMObw6jlaQGJK15lKw",
+    authDomain:        "divedeck2026.firebaseapp.com",
+    projectId:         "divedeck2026",
+    storageBucket:     "divedeck2026.firebasestorage.app",
+    messagingSenderId: "614292999651",
+    appId:             "1:614292999651:web:8e3522a7e92d1f44dba4d6",
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+
+  // ── Login / Registrierung ────────────────────────────────
+  let authMode     = 'login';
+  let currentUser  = null;
+
+  function toggleAuthMode() {
+    authMode = authMode === 'login' ? 'signup' : 'login';
+    document.getElementById('authTitle').textContent            = authMode === 'login' ? 'Anmelden' : 'Registrieren';
+    document.getElementById('authSubmitBtn').textContent        = authMode === 'login' ? 'Anmelden' : 'Konto erstellen';
+    document.getElementById('authPasswordConfirmField').style.display = authMode === 'signup' ? 'flex' : 'none';
+    document.getElementById('authToggleModeBtn').textContent    = authMode === 'login' ? 'Noch kein Konto? Registrieren' : 'Bereits registriert? Anmelden';
+    document.getElementById('authError').style.display = 'none';
+  }
+
+  function showAuthError(msg) {
+    const el = document.getElementById('authError');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function mapAuthError(code) {
+    const map = {
+      'auth/invalid-email':      'Ungültige E-Mail-Adresse.',
+      'auth/user-not-found':     'Kein Konto mit dieser E-Mail gefunden.',
+      'auth/wrong-password':     'Falsches Passwort.',
+      'auth/invalid-credential': 'E-Mail oder Passwort ist falsch.',
+      'auth/email-already-in-use': 'Diese E-Mail wird bereits verwendet.',
+      'auth/weak-password':      'Passwort muss mindestens 6 Zeichen haben.',
+      'auth/too-many-requests':  'Zu viele Versuche. Bitte später erneut versuchen.',
+    };
+    return map[code] || 'Ein Fehler ist aufgetreten. Bitte erneut versuchen.';
+  }
+
+  document.getElementById('authForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const email = document.getElementById('authEmail').value.trim();
+    const pass  = document.getElementById('authPassword').value;
+    document.getElementById('authError').style.display = 'none';
+
+    if (authMode === 'signup' && pass !== document.getElementById('authPasswordConfirm').value) {
+      showAuthError('Passwörter stimmen nicht überein.');
+      return;
+    }
+
+    const btn = document.getElementById('authSubmitBtn');
+    btn.disabled = true;
+    const action = authMode === 'login'
+      ? auth.signInWithEmailAndPassword(email, pass)
+      : auth.createUserWithEmailAndPassword(email, pass);
+    action
+      .catch(err => showAuthError(mapAuthError(err.code)))
+      .finally(() => { btn.disabled = false; });
+  });
+
+  function handlePasswordReset() {
+    const email = document.getElementById('authEmail').value.trim();
+    if (!email) { showAuthError('Bitte zuerst E-Mail-Adresse eingeben.'); return; }
+    auth.sendPasswordResetEmail(email)
+      .then(() => showToast('✓ E-Mail zum Zurücksetzen wurde gesendet.'))
+      .catch(err => showAuthError(mapAuthError(err.code)));
+  }
+
+  auth.onAuthStateChanged(user => {
+    currentUser = user;
+    document.getElementById('authGate').style.display = user ? 'none' : 'flex';
+    if (user) {
+      startDivesListener(user.uid);
+    } else {
+      stopDivesListener();
+      divesCache = [];
+      renderDives();
+    }
+  });
 
   const STORAGE_KEY = 'tauchlogbuch_v1';
   let editingId    = null;
@@ -2410,7 +2596,11 @@
   }
 
   // ── Fotos ────────────────────────────────────────────────
+  // Fotos werden (ohne Firebase Storage) direkt als Base64-Bild im
+  // Tauchgang-Dokument in Firestore gespeichert. Firestore erlaubt max.
+  // 1 MB pro Dokument – deshalb stärkere Kompression + Foto-Limit.
   let selectedPhotos = [];
+  const MAX_PHOTOS_PER_DIVE = 5;
 
   function resizeImage(file) {
     return new Promise(resolve => {
@@ -2418,7 +2608,7 @@
       const url = URL.createObjectURL(file);
       img.onload = () => {
         URL.revokeObjectURL(url);
-        const MAX = 1200;
+        const MAX = 700;
         let w = img.width, h = img.height;
         if (w > MAX || h > MAX) {
           if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
@@ -2427,7 +2617,7 @@
         const canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.75));
+        resolve(canvas.toDataURL('image/jpeg', 0.55));
       };
       img.src = url;
     });
@@ -2436,6 +2626,10 @@
   async function handlePhotoUpload(e) {
     const files = Array.from(e.target.files);
     for (const file of files) {
+      if (selectedPhotos.length >= MAX_PHOTOS_PER_DIVE) {
+        showToast(`Maximal ${MAX_PHOTOS_PER_DIVE} Fotos pro Tauchgang.`);
+        break;
+      }
       const compressed = await resizeImage(file);
       selectedPhotos.push(compressed);
     }
@@ -2466,17 +2660,74 @@
     renderPhotoPreview();
   }
 
-  // ── Daten laden & speichern ──────────────────────────────
+  // ── Daten laden & speichern (Firestore, live pro Nutzer) ──
+  let divesCache       = [];
+  let unsubscribeDives = null;
+
   function loadDives() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    } catch {
-      return [];
-    }
+    return divesCache;
   }
 
-  function saveDives(dives) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dives));
+  function startDivesListener(uid) {
+    const divesRef = db.collection('users').doc(uid).collection('dives');
+    unsubscribeDives = divesRef.onSnapshot(snapshot => {
+      divesCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderDives();
+      updateCountryDatalist();
+      maybeOfferLocalMigration();
+    }, err => {
+      console.error(err);
+      showToast('Fehler beim Laden der Tauchgänge.');
+    });
+  }
+
+  function stopDivesListener() {
+    if (unsubscribeDives) { unsubscribeDives(); unsubscribeDives = null; }
+  }
+
+  // ── Lokale Alt-Daten einmalig zur Übernahme anbieten ──────
+  const MIGRATION_OFFERED_KEY = 'tauchlogbuch_migration_offered_v1';
+
+  function maybeOfferLocalMigration() {
+    if (localStorage.getItem(MIGRATION_OFFERED_KEY)) return;
+    if (divesCache.length > 0) { localStorage.setItem(MIGRATION_OFFERED_KEY, '1'); return; }
+    let localDives = [];
+    try { localDives = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch {}
+    if (!localDives.length) { localStorage.setItem(MIGRATION_OFFERED_KEY, '1'); return; }
+    document.getElementById('migrationCount').textContent = localDives.length;
+    document.getElementById('migrationOverlay').style.display = 'flex';
+  }
+
+  function declineMigration() {
+    localStorage.setItem(MIGRATION_OFFERED_KEY, '1');
+    document.getElementById('migrationOverlay').style.display = 'none';
+  }
+
+  async function acceptMigration() {
+    localStorage.setItem(MIGRATION_OFFERED_KEY, '1');
+    document.getElementById('migrationOverlay').style.display = 'none';
+    showToast('Übertrage lokale Tauchgänge …');
+    let photosSkipped = 0;
+    try {
+      const localDives = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      const uid      = currentUser.uid;
+      const divesRef = db.collection('users').doc(uid).collection('dives');
+      for (const chunk of chunksOf(localDives, 400)) {
+        const batch = db.batch();
+        for (const d of chunk) {
+          const { id: _oldId, ...rest } = d;
+          if ((rest.photos || []).length > MAX_PHOTOS_PER_DIVE) rest.photos = rest.photos.slice(0, MAX_PHOTOS_PER_DIVE);
+          if (!checkFieldsSize(rest, true)) { rest.photos = []; photosSkipped++; }
+          batch.set(divesRef.doc(), rest);
+        }
+        await batch.commit();
+      }
+      await renumberDivesByDate();
+      showToast(`✓ ${localDives.length} Tauchgang/-gänge übertragen!${photosSkipped ? ' (Fotos bei ' + photosSkipped + ' Einträgen übersprungen, zu groß)' : ''}`);
+    } catch (err) {
+      console.error(err);
+      showToast('Fehler bei der Übertragung. Lokale Daten bleiben erhalten.');
+    }
   }
 
   // ── Hilfsfunktionen ──────────────────────────────────────
@@ -2488,17 +2739,23 @@
 
   function fillNextNr() { /* nr wird automatisch per renumberDivesByDate vergeben */ }
 
-  // ── Nummern nach Datum neu vergeben ─────────────────────
-  function renumberDivesByDate() {
-    let dives = loadDives();
-    dives.sort((a, b) => {
+  // ── Nummern nach Datum neu vergeben (nur geänderte schreiben) ──
+  async function renumberDivesByDate() {
+    if (!currentUser) return;
+    const sorted = [...divesCache].sort((a, b) => {
       if (!a.date && !b.date) return 0;
       if (!a.date) return 1;
       if (!b.date) return -1;
       return a.date.localeCompare(b.date);
     });
-    dives = dives.map((d, i) => ({ ...d, nr: String(i + 1) }));
-    saveDives(dives);
+    const divesRef = db.collection('users').doc(currentUser.uid).collection('dives');
+    const batch = db.batch();
+    let changed = 0;
+    sorted.forEach((d, i) => {
+      const newNr = String(i + 1);
+      if (d.nr !== newNr) { batch.update(divesRef.doc(d.id), { nr: newNr }); changed++; }
+    });
+    if (changed > 0) await batch.commit();
   }
 
   function showToast(msg) {
@@ -3137,7 +3394,7 @@
     // Neueste zuerst (nach Datum absteigend, dann nach ID)
     const sorted = [...dives].sort((a, b) => {
       if (a.date && b.date) return b.date.localeCompare(a.date);
-      return b.id - a.id;
+      return (b.createdAt || 0) - (a.createdAt || 0);
     });
 
     const f = (label, val) => val
@@ -3522,9 +3779,9 @@
   // ── Karten-Aktionen ──────────────────────────────────────
   function actionButtonsHTML(id) {
     return `
-      <button class="card-action-btn" onclick="templateDive(${id})" aria-label="Als Vorlage übernehmen" title="Als Vorlage"><span class="material-symbols-outlined">content_copy</span></button>
-      <button class="card-action-btn" onclick="editDive(${id})" aria-label="Bearbeiten" title="Bearbeiten"><span class="material-symbols-outlined">edit</span></button>
-      <button class="card-action-btn danger" onclick="confirmDelete(${id})" aria-label="Löschen" title="Löschen"><span class="material-symbols-outlined">delete</span></button>
+      <button class="card-action-btn" onclick="templateDive('${id}')" aria-label="Als Vorlage übernehmen" title="Als Vorlage"><span class="material-symbols-outlined">content_copy</span></button>
+      <button class="card-action-btn" onclick="editDive('${id}')" aria-label="Bearbeiten" title="Bearbeiten"><span class="material-symbols-outlined">edit</span></button>
+      <button class="card-action-btn danger" onclick="confirmDelete('${id}')" aria-label="Löschen" title="Löschen"><span class="material-symbols-outlined">delete</span></button>
     `;
   }
 
@@ -3545,17 +3802,36 @@
     cancelDeleteOverlay();
   }
 
+  // ── Dokumentgröße prüfen (Firestore erlaubt max. 1 MB/Dokument) ──
+  function checkFieldsSize(fields, silent = false) {
+    const bytes = new Blob([JSON.stringify(fields)]).size;
+    if (bytes > 950000) {
+      if (!silent) showToast('Zu viele/große Fotos für diesen Tauchgang – bitte einige entfernen.');
+      return false;
+    }
+    return true;
+  }
+
+  function chunksOf(arr, size) {
+    const out = [];
+    for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+    return out;
+  }
+
   // ── Tauchgang löschen ────────────────────────────────────
-  function deleteDive(id) {
-    const dives = loadDives().filter(d => d.id !== id);
-    saveDives(dives);
-    renumberDivesByDate();
-    renderDives();
-    showToast('Tauchgang gelöscht.');
+  async function deleteDive(id) {
+    try {
+      await db.collection('users').doc(currentUser.uid).collection('dives').doc(id).delete();
+      await renumberDivesByDate();
+      showToast('Tauchgang gelöscht.');
+    } catch (err) {
+      console.error(err);
+      showToast('Fehler beim Löschen.');
+    }
   }
 
   // ── Formular absenden ────────────────────────────────────
-  document.getElementById('diveForm').addEventListener('submit', function(e) {
+  document.getElementById('diveForm').addEventListener('submit', async function(e) {
     e.preventDefault(); // verhindert Seiten-Reload
 
     const site = document.getElementById('site').value.trim();
@@ -3564,6 +3840,7 @@
       showToast('Bitte Datum und Tauchplatz ausfüllen.');
       return;
     }
+    if (!currentUser) { showToast('Bitte zuerst anmelden.'); return; }
 
     const fields = {
       date:       date,
@@ -3586,33 +3863,39 @@
       photos:     [...selectedPhotos],
     };
 
-    let dives = loadDives();
+    if (!checkFieldsSize(fields)) return;
 
-    const btn = document.getElementById('btnSubmit');
+    const uid       = currentUser.uid;
+    const divesRef  = db.collection('users').doc(uid).collection('dives');
+    const btn       = document.getElementById('btnSubmit');
+    const form      = this;
+    btn.disabled    = true;
 
-    if (editingId !== null) {
-      dives = dives.map(d => d.id === editingId ? { ...d, ...fields } : d);
-      saveDives(dives);
-      renumberDivesByDate();
-      renderDives();
-      updateCountryDatalist();
-      _resetFormState();
-      closeForm();
-      showToast('✓ Tauchgang aktualisiert!');
-    } else {
-      dives.push({ id: Date.now(), ...fields });
-      saveDives(dives);
-      renumberDivesByDate();
-      renderDives();
-      updateCountryDatalist();
-      this.reset();
-      clearTags(); clearSightings(); clearMood();
-      clearPhotos();
-      fillNextNr();
-      btn.classList.add('saved');
-      setTimeout(() => btn.classList.remove('saved'), 300);
-      closeForm();
-      showToast('✓ Tauchgang gespeichert!');
+    try {
+      if (editingId !== null) {
+        await divesRef.doc(editingId).update(fields);
+        await renumberDivesByDate();
+        _resetFormState();
+        closeForm();
+        showToast('✓ Tauchgang aktualisiert!');
+      } else {
+        fields.createdAt = Date.now();
+        await divesRef.doc().set(fields);
+        await renumberDivesByDate();
+        form.reset();
+        clearTags(); clearSightings(); clearMood();
+        clearPhotos();
+        fillNextNr();
+        btn.classList.add('saved');
+        setTimeout(() => btn.classList.remove('saved'), 300);
+        closeForm();
+        showToast('✓ Tauchgang gespeichert!');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Fehler beim Speichern.');
+    } finally {
+      btn.disabled = false;
     }
   });
 
@@ -3635,13 +3918,16 @@
     const file = this.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = async e => {
       try {
         const imported = JSON.parse(e.target.result);
         if (!Array.isArray(imported) || imported.some(d => typeof d !== 'object')) throw new Error();
+        if (!currentUser) { showToast('Bitte zuerst anmelden.'); this.value = ''; return; }
 
+        const uid      = currentUser.uid;
+        const divesRef = db.collection('users').doc(uid).collection('dives');
         const existing = loadDives();
-        let merged, count;
+        let toWrite, count;
 
         if (existing.length > 0) {
           const replace = confirm(
@@ -3650,24 +3936,39 @@
             `Abbrechen → Zusammenführen (bereits vorhandene werden übersprungen)`
           );
           if (replace) {
-            merged = imported;
-            count  = imported.length;
+            for (const chunk of chunksOf(existing, 400)) {
+              const batch = db.batch();
+              chunk.forEach(d => batch.delete(divesRef.doc(d.id)));
+              await batch.commit();
+            }
+            toWrite = imported;
+            count   = imported.length;
           } else {
             const ids = new Set(existing.map(d => d.id));
-            const neu = imported.filter(d => !ids.has(d.id));
-            merged = [...existing, ...neu];
-            count  = neu.length;
+            toWrite = imported.filter(d => !ids.has(d.id));
+            count   = toWrite.length;
           }
         } else {
-          merged = imported;
-          count  = imported.length;
+          toWrite = imported;
+          count   = imported.length;
         }
 
-        saveDives(merged);
-        renderDives();
-        fillNextNr();
-        showToast(`✓ ${count} Tauchgang/-gänge importiert.`);
-      } catch {
+        showToast('Importiere Tauchgänge …');
+        let photosSkipped = 0;
+        for (const chunk of chunksOf(toWrite, 400)) {
+          const batch = db.batch();
+          for (const d of chunk) {
+            const { id: _oldId, ...rest } = d;
+            if ((rest.photos || []).length > MAX_PHOTOS_PER_DIVE) rest.photos = rest.photos.slice(0, MAX_PHOTOS_PER_DIVE);
+            if (!checkFieldsSize(rest, true)) { rest.photos = []; photosSkipped++; }
+            batch.set(divesRef.doc(), rest);
+          }
+          await batch.commit();
+        }
+        await renumberDivesByDate();
+        showToast(`✓ ${count} Tauchgang/-gänge importiert.${photosSkipped ? ' (Fotos bei ' + photosSkipped + ' Einträgen übersprungen, zu groß)' : ''}`);
+      } catch (err) {
+        console.error(err);
         showToast('Fehler: Datei konnte nicht gelesen werden.');
       }
       this.value = '';
@@ -3781,14 +4082,16 @@
       btn.classList.toggle('active', btn.dataset.nav === section);
     });
 
-    const isDives = section === 'dives';
-    const isStats = section === 'stats';
-    const isMap   = section === 'map';
+    const isDives   = section === 'dives';
+    const isStats   = section === 'stats';
+    const isMap     = section === 'map';
+    const isProfile = section === 'profile';
 
-    document.getElementById('pageDives').style.display     = isDives ? '' : 'none';
-    document.getElementById('pageDivesList').style.display = isDives ? '' : 'none';
-    document.getElementById('pageStats').style.display     = isStats ? '' : 'none';
-    document.getElementById('pageMap').style.display       = isMap   ? '' : 'none';
+    document.getElementById('pageDives').style.display     = isDives   ? '' : 'none';
+    document.getElementById('pageDivesList').style.display  = isDives   ? '' : 'none';
+    document.getElementById('pageStats').style.display      = isStats   ? '' : 'none';
+    document.getElementById('pageMap').style.display         = isMap     ? '' : 'none';
+    document.getElementById('pageProfile').style.display     = isProfile ? '' : 'none';
 
     if (isStats) {
       const dives = loadDives();
@@ -3797,13 +4100,8 @@
 
     if (isMap) setTimeout(renderDivesMap, 30);
 
-    if (section === 'profile') {
-      showToast('Profil-Funktion kommt bald 🤿');
-      document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.nav === 'dives');
-      });
-      document.getElementById('pageDives').style.display     = '';
-      document.getElementById('pageDivesList').style.display = '';
+    if (isProfile) {
+      document.getElementById('profileEmail').textContent = escapeHtml(currentUser ? currentUser.email : '');
     }
 
     window.scrollTo({ top: 0 });
