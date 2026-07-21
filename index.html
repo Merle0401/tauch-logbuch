@@ -94,7 +94,7 @@
     main {
       max-width: 860px;
       margin: 0 auto;
-      padding: 1.5rem 1rem calc(6rem + env(safe-area-inset-bottom));
+      padding: 1.5rem 1rem calc(6rem + var(--safe-bottom, env(safe-area-inset-bottom)));
     }
 
     /* ── Trigger-Button ─────────────────────────────────── */
@@ -143,7 +143,7 @@
       background: rgba(13,20,32,0.8);
       backdrop-filter: blur(3px);
       z-index: 300;
-      padding: calc(1.5rem + env(safe-area-inset-top)) 1rem calc(1.5rem + env(safe-area-inset-bottom));
+      padding: calc(1.5rem + env(safe-area-inset-top)) 1rem calc(1.5rem + var(--safe-bottom, env(safe-area-inset-bottom)));
     }
 
     .modal-overlay.active {
@@ -167,7 +167,7 @@
       display: flex;
       flex-direction: column;
       max-height: calc(100vh - 3rem);
-      max-height: calc(100dvh - 3rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+      max-height: calc(100dvh - 3rem - env(safe-area-inset-top) - var(--safe-bottom, env(safe-area-inset-bottom)));
       overflow-y: auto;
     }
 
@@ -1426,7 +1426,7 @@
       align-items: center;
       justify-content: space-around;
       height: 64px;
-      padding-bottom: env(safe-area-inset-bottom);
+      padding-bottom: var(--safe-bottom, env(safe-area-inset-bottom));
       z-index: 200;
     }
 
@@ -1776,7 +1776,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: calc(1.5rem + env(safe-area-inset-top)) 1rem calc(1.5rem + env(safe-area-inset-bottom));
+      padding: calc(1.5rem + env(safe-area-inset-top)) 1rem calc(1.5rem + var(--safe-bottom, env(safe-area-inset-bottom)));
       background: linear-gradient(160deg, #0d1420 0%, #161e2b 55%, #0d1420 100%);
     }
 
@@ -2238,6 +2238,19 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  // ── Sicheren Bereich unten (Home-Indicator) einmalig einfrieren ──
+  // Safari ändert env(safe-area-inset-bottom) live, je nachdem ob die
+  // eigene Werkzeugleiste beim Scrollen gerade ein- oder ausgeblendet
+  // ist. Ohne das würde unser Bottom-Nav-Padding beim Scrollen mitwackeln.
+  (function freezeSafeAreaBottom() {
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;bottom:0;left:0;height:0;padding-bottom:env(safe-area-inset-bottom);visibility:hidden;pointer-events:none;';
+    document.body.appendChild(probe);
+    const value = getComputedStyle(probe).paddingBottom;
+    document.documentElement.style.setProperty('--safe-bottom', value);
+    probe.remove();
+  })();
+
   // ── Lade-Screen (Splash Screen) ───────────────────────────
   // Zum Entwickeln auf false setzen, damit der Lade-Screen bei jedem
   // Neuladen der Seite übersprungen wird.
