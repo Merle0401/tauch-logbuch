@@ -1840,17 +1840,37 @@
 
     /* ── Profil-Avatar ─────────────────────────────────────── */
     .profile-avatar {
-      width: 72px;
-      height: 72px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: #ffffff;
-      margin: 0 auto 1.25rem;
+      flex-shrink: 0;
     }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+    }
+    .icon-btn:hover { background: #2b3648; color: #ffffff; }
+    .icon-btn .material-symbols-outlined { font-size: 18px; }
 
     .danger-zone {
       margin-top: 1.5rem;
@@ -1888,6 +1908,10 @@
       <div class="auth-error" id="authError" style="display:none"></div>
       <form id="authForm">
         <div class="form-grid">
+          <div class="field full-width" id="authNameField" style="display:none">
+            <label for="authName">Name</label>
+            <input type="text" id="authName" maxlength="40" autocomplete="name" placeholder="Wie sollen wir dich nennen?" />
+          </div>
           <div class="field full-width">
             <label for="authEmail">E-Mail</label>
             <input type="email" id="authEmail" required autocomplete="email" />
@@ -2003,10 +2027,21 @@
 
     <!-- Profil-Kopfbereich (ohne Karte) -->
     <div style="max-width:420px;margin:0 auto">
-      <div class="profile-avatar" id="profileAvatar"></div>
-
-      <p style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;text-align:center">Angemeldet als</p>
-      <p id="profileEmail" style="font-size:1.1rem;font-weight:600;margin:0.35rem 0 1.25rem;text-align:center"></p>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+        <div class="profile-avatar" id="profileAvatar"></div>
+        <div style="flex:1;min-width:0">
+          <div id="profileNameDisplayRow" style="display:flex;align-items:center;gap:0.35rem">
+            <span id="profileNameDisplay" style="font-size:1.15rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+            <button type="button" class="icon-btn" onclick="startEditDisplayName()" aria-label="Anzeigename bearbeiten"><span class="material-symbols-outlined">edit</span></button>
+          </div>
+          <div id="profileNameEditRow" style="display:none;align-items:center;gap:0.35rem">
+            <input type="text" id="profileDisplayName" maxlength="40" placeholder="z. B. Max Mustermann" style="flex:1;min-width:0" />
+            <button type="button" class="icon-btn" id="profileNameSaveIconBtn" onclick="saveDisplayName()" aria-label="Speichern"><span class="material-symbols-outlined">check</span></button>
+            <button type="button" class="icon-btn" onclick="cancelEditDisplayName()" aria-label="Abbrechen"><span class="material-symbols-outlined">close</span></button>
+          </div>
+          <p id="profileEmail" style="color:var(--text-muted);font-size:0.82rem;margin-top:0.2rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></p>
+        </div>
+      </div>
 
       <div class="auth-error" id="profileVerifyBanner" style="display:none;background:rgba(224,180,82,0.12);border-color:rgba(224,180,82,0.4);color:#f0c869">
         <div id="profileVerifyText">E-Mail nicht bestätigt.</div>
@@ -2015,12 +2050,6 @@
           <button type="button" class="auth-link" style="display:inline;width:auto;padding:0" onclick="refreshEmailVerificationStatus()">Aktualisieren</button>
         </div>
       </div>
-
-      <div class="field full-width" style="margin-top:1.25rem">
-        <label for="profileDisplayName">Anzeigename</label>
-        <input type="text" id="profileDisplayName" maxlength="40" placeholder="z. B. Max Mustermann" />
-      </div>
-      <button type="button" class="btn-add" id="profileNameSaveBtn" onclick="saveDisplayName()">Speichern</button>
     </div>
 
     <!-- Sicherheit-Karte -->
@@ -2469,6 +2498,7 @@
     authMode = authMode === 'login' ? 'signup' : 'login';
     document.getElementById('authTitle').textContent            = authMode === 'login' ? 'Anmelden' : 'Registrieren';
     document.getElementById('authSubmitBtn').textContent        = authMode === 'login' ? 'Anmelden' : 'Konto erstellen';
+    document.getElementById('authNameField').style.display            = authMode === 'signup' ? 'flex' : 'none';
     document.getElementById('authPasswordConfirmField').style.display = authMode === 'signup' ? 'flex' : 'none';
     document.getElementById('authToggleModeBtn').textContent    = authMode === 'login' ? 'Noch kein Konto? Registrieren' : 'Bereits registriert? Anmelden';
     document.getElementById('authError').style.display = 'none';
@@ -2505,6 +2535,7 @@
 
   document.getElementById('authForm').addEventListener('submit', function (e) {
     e.preventDefault();
+    const name  = document.getElementById('authName').value.trim();
     const email = document.getElementById('authEmail').value.trim();
     const pass  = document.getElementById('authPassword').value;
     document.getElementById('authError').style.display = 'none';
@@ -2523,9 +2554,13 @@
     action
       .then(result => {
         if (wasSignup && result && result.user) {
-          return result.user.sendEmailVerification()
-            .then(() => showToast('✓ Konto erstellt! Bestätigungs-E-Mail wurde gesendet.'))
-            .catch(err => { console.error('sendEmailVerification fehlgeschlagen:', err); });
+          return result.user.updateProfile({ displayName: name || null })
+            .then(() => result.user.sendEmailVerification())
+            .then(() => {
+              showToast('✓ Konto erstellt! Bestätigungs-E-Mail wurde gesendet.');
+              navTo('dives');
+            })
+            .catch(err => { console.error('Signup-Nachbereitung fehlgeschlagen:', err); });
         }
       })
       .catch(err => showAuthError(mapAuthError(err.code)))
@@ -3008,7 +3043,9 @@
   function renderProfile() {
     if (!currentUser) return;
     document.getElementById('profileEmail').textContent = currentUser.email || '';
+    document.getElementById('profileNameDisplay').textContent = currentUser.displayName || 'Name hinzufügen';
     document.getElementById('profileDisplayName').value = currentUser.displayName || '';
+    cancelEditDisplayName();
 
     const avatarEl = document.getElementById('profileAvatar');
     avatarEl.textContent = getInitials(currentUser);
@@ -3017,10 +3054,22 @@
     document.getElementById('profileVerifyBanner').style.display = currentUser.emailVerified ? 'none' : 'block';
   }
 
+  function startEditDisplayName() {
+    document.getElementById('profileNameDisplayRow').style.display = 'none';
+    document.getElementById('profileNameEditRow').style.display = 'flex';
+    document.getElementById('profileDisplayName').focus();
+  }
+
+  function cancelEditDisplayName() {
+    document.getElementById('profileNameDisplayRow').style.display = 'flex';
+    document.getElementById('profileNameEditRow').style.display = 'none';
+    document.getElementById('profileDisplayName').value = currentUser ? (currentUser.displayName || '') : '';
+  }
+
   async function saveDisplayName() {
     if (!currentUser) return;
     const name = document.getElementById('profileDisplayName').value.trim();
-    const btn = document.getElementById('profileNameSaveBtn');
+    const btn = document.getElementById('profileNameSaveIconBtn');
     btn.disabled = true;
     try {
       await currentUser.updateProfile({ displayName: name || null });
