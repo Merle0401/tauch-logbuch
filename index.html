@@ -1808,6 +1808,44 @@
     }
 
     .auth-link:hover { color: #ffffff; }
+
+    /* ── Passwort anzeigen/verstecken ─────────────────────── */
+    .password-field { position: relative; }
+    .password-field input { padding-right: 2.75rem; }
+    .password-toggle-btn {
+      position: absolute;
+      top: 50%;
+      right: 0.35rem;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.15s, color 0.15s;
+      font-family: inherit;
+    }
+    .password-toggle-btn:hover { background: #2b3648; color: #ffffff; }
+    .password-toggle-btn .material-symbols-outlined { font-size: 20px; }
+
+    /* ── Profil-Avatar ─────────────────────────────────────── */
+    .profile-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 auto 1.25rem;
+    }
   </style>
 </head>
 <body>
@@ -1843,11 +1881,17 @@
           </div>
           <div class="field full-width">
             <label for="authPassword">Passwort</label>
-            <input type="password" id="authPassword" required autocomplete="current-password" minlength="6" />
+            <div class="password-field">
+              <input type="password" id="authPassword" required autocomplete="current-password" minlength="6" />
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('authPassword', this)" aria-label="Passwort anzeigen"><span class="material-symbols-outlined">visibility</span></button>
+            </div>
           </div>
           <div class="field full-width" id="authPasswordConfirmField" style="display:none">
             <label for="authPasswordConfirm">Passwort wiederholen</label>
-            <input type="password" id="authPasswordConfirm" autocomplete="new-password" minlength="6" />
+            <div class="password-field">
+              <input type="password" id="authPasswordConfirm" autocomplete="new-password" minlength="6" />
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('authPasswordConfirm', this)" aria-label="Passwort anzeigen"><span class="material-symbols-outlined">visibility</span></button>
+            </div>
           </div>
         </div>
         <button type="submit" class="btn-add" id="authSubmitBtn">Anmelden</button>
@@ -1943,11 +1987,104 @@
   <!-- Seite: Profil -->
   <div id="pageProfile" style="display:none">
     <div class="section-title">👤 Profil</div>
+
+    <!-- Profil-Karte -->
     <div class="form-card" style="max-width:420px;margin:0 auto">
+      <div class="form-card-header"><h2>Profil</h2></div>
       <div class="form-card-body">
-        <p style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Angemeldet als</p>
-        <p id="profileEmail" style="font-size:1.1rem;font-weight:600;margin:0.35rem 0 1.5rem"></p>
+        <div class="profile-avatar" id="profileAvatar"></div>
+
+        <div class="auth-error" id="profileVerifyBanner" style="display:none;background:rgba(224,180,82,0.12);border-color:rgba(224,180,82,0.4);color:#f0c869">
+          <span id="profileVerifyText">E-Mail nicht bestätigt.</span>
+          <button type="button" class="auth-link" style="display:inline;width:auto;padding:0" onclick="resendVerificationEmail()">Erneut senden</button>
+          ·
+          <button type="button" class="auth-link" style="display:inline;width:auto;padding:0" onclick="refreshEmailVerificationStatus()">Aktualisieren</button>
+        </div>
+
+        <div class="field full-width">
+          <label for="profileDisplayName">Anzeigename</label>
+          <input type="text" id="profileDisplayName" maxlength="40" placeholder="z. B. Max Mustermann" />
+        </div>
+        <button type="button" class="btn-add" id="profileNameSaveBtn" onclick="saveDisplayName()">Speichern</button>
+
+        <p style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;margin-top:1.5rem">Angemeldet als</p>
+        <p id="profileEmail" style="font-size:1.1rem;font-weight:600;margin:0.35rem 0 0"></p>
+      </div>
+    </div>
+
+    <!-- Sicherheit-Karte -->
+    <div class="form-card" style="max-width:420px;margin:1.5rem auto 0">
+      <div class="form-card-header"><h2>Sicherheit</h2></div>
+      <div class="form-card-body">
+        <form id="changePasswordForm">
+          <div class="form-grid">
+            <div class="field full-width">
+              <label for="cpCurrentPassword">Aktuelles Passwort</label>
+              <div class="password-field">
+                <input type="password" id="cpCurrentPassword" autocomplete="current-password" required />
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('cpCurrentPassword', this)" aria-label="Passwort anzeigen"><span class="material-symbols-outlined">visibility</span></button>
+              </div>
+            </div>
+            <div class="field full-width">
+              <label for="cpNewPassword">Neues Passwort</label>
+              <div class="password-field">
+                <input type="password" id="cpNewPassword" autocomplete="new-password" minlength="6" required />
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('cpNewPassword', this)" aria-label="Passwort anzeigen"><span class="material-symbols-outlined">visibility</span></button>
+              </div>
+            </div>
+            <div class="field full-width">
+              <label for="cpNewPasswordConfirm">Neues Passwort wiederholen</label>
+              <div class="password-field">
+                <input type="password" id="cpNewPasswordConfirm" autocomplete="new-password" minlength="6" required />
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('cpNewPasswordConfirm', this)" aria-label="Passwort anzeigen"><span class="material-symbols-outlined">visibility</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="auth-error" id="changePasswordError" style="display:none"></div>
+          <button type="submit" class="btn-add" id="changePasswordBtn">Passwort ändern</button>
+        </form>
+
+        <hr style="border-color:var(--border);margin:1.75rem 0" />
+
+        <form id="changeEmailForm">
+          <div class="form-grid">
+            <div class="field full-width">
+              <label for="ceNewEmail">Neue E-Mail-Adresse</label>
+              <input type="email" id="ceNewEmail" autocomplete="email" required />
+            </div>
+            <div class="field full-width">
+              <label for="ceCurrentPassword">Aktuelles Passwort</label>
+              <div class="password-field">
+                <input type="password" id="ceCurrentPassword" autocomplete="current-password" required />
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('ceCurrentPassword', this)" aria-label="Passwort anzeigen"><span class="material-symbols-outlined">visibility</span></button>
+              </div>
+            </div>
+          </div>
+          <p style="color:var(--text-muted);font-size:0.8rem;margin:0.75rem 0 0">Du erhältst an die neue Adresse einen Bestätigungslink. Deine Login-E-Mail ändert sich erst, nachdem du diesen Link dort angeklickt hast.</p>
+          <div class="auth-error" id="changeEmailError" style="display:none"></div>
+          <button type="submit" class="btn-add" id="changeEmailBtn">Bestätigungslink senden</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Konto-Karte -->
+    <div class="form-card" style="max-width:420px;margin:1.5rem auto 0">
+      <div class="form-card-header"><h2>Konto</h2></div>
+      <div class="form-card-body">
         <button type="button" class="btn-add" style="background:var(--danger)" onclick="auth.signOut()">Abmelden</button>
+
+        <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)">
+          <p style="color:var(--danger);font-weight:700;margin-bottom:0.5rem">Konto löschen</p>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem">Alle gespeicherten Tauchgänge werden dabei unwiderruflich gelöscht.</p>
+          <div class="field full-width">
+            <label for="delCurrentPassword">Aktuelles Passwort</label>
+            <div class="password-field">
+              <input type="password" id="delCurrentPassword" autocomplete="current-password" />
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('delCurrentPassword', this)" aria-label="Passwort anzeigen"><span class="material-symbols-outlined">visibility</span></button>
+            </div>
+          </div>
+          <button type="button" class="btn-add" style="background:var(--danger)" onclick="requestAccountDeletion()">Konto endgültig löschen</button>
+        </div>
       </div>
     </div>
   </div>
@@ -2120,7 +2257,7 @@
       <div style="display:flex;gap:0.5rem;align-items:center">
         <div class="search-wrap" style="flex:1">
           <span class="search-icon material-symbols-outlined">search</span>
-          <input type="text" id="searchInput" placeholder="Tauchplatz oder Buddy …" oninput="filterDives()" />
+          <input type="text" id="searchInput" placeholder="Tauchgang suchen z.B. Ort, Buddy" oninput="filterDives()" />
           <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:none"><span class="material-symbols-outlined">close</span></button>
         </div>
         <button class="filter-icon-btn" id="filterIconBtn" onclick="openFilterOverlay()" aria-label="Filter">
@@ -2235,6 +2372,16 @@
   </div>
 </div>
 
+<div class="confirm-overlay" id="deleteAccountOverlay" style="display:none" role="dialog" aria-modal="true">
+  <div class="confirm-dialog">
+    <p>Konto und ALLE Tauchgänge wirklich unwiderruflich löschen?</p>
+    <div class="confirm-actions">
+      <button class="btn-confirm-no" onclick="cancelAccountDeletion()">Nein</button>
+      <button class="btn-confirm-yes" onclick="confirmAccountDeletion()">Ja, löschen</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -2297,6 +2444,14 @@
   let authMode     = 'login';
   let currentUser  = null;
 
+  function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const showing = input.type === 'text';
+    input.type = showing ? 'password' : 'text';
+    btn.querySelector('.material-symbols-outlined').textContent = showing ? 'visibility' : 'visibility_off';
+    btn.setAttribute('aria-label', showing ? 'Passwort anzeigen' : 'Passwort verbergen');
+  }
+
   function toggleAuthMode() {
     authMode = authMode === 'login' ? 'signup' : 'login';
     document.getElementById('authTitle').textContent            = authMode === 'login' ? 'Anmelden' : 'Registrieren';
@@ -2321,8 +2476,18 @@
       'auth/email-already-in-use': 'Diese E-Mail wird bereits verwendet.',
       'auth/weak-password':      'Passwort muss mindestens 6 Zeichen haben.',
       'auth/too-many-requests':  'Zu viele Versuche. Bitte später erneut versuchen.',
+      'auth/requires-recent-login': 'Sitzung abgelaufen. Bitte aktuelles Passwort erneut eingeben.',
+      'auth/user-mismatch':      'Das eingegebene Passwort gehört nicht zu diesem Konto.',
+      'auth/user-token-expired': 'Deine Sitzung ist abgelaufen. Bitte erneut anmelden.',
+      'auth/network-request-failed': 'Netzwerkfehler. Bitte Internetverbindung prüfen.',
+      'auth/operation-not-allowed': 'Diese Aktion ist derzeit nicht verfügbar.',
     };
     return map[code] || 'Ein Fehler ist aufgetreten. Bitte erneut versuchen.';
+  }
+
+  function reauthenticate(password) {
+    const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, password);
+    return currentUser.reauthenticateWithCredential(cred);
   }
 
   document.getElementById('authForm').addEventListener('submit', function (e) {
@@ -2338,10 +2503,18 @@
 
     const btn = document.getElementById('authSubmitBtn');
     btn.disabled = true;
+    const wasSignup = authMode === 'signup';
     const action = authMode === 'login'
       ? auth.signInWithEmailAndPassword(email, pass)
       : auth.createUserWithEmailAndPassword(email, pass);
     action
+      .then(result => {
+        if (wasSignup && result && result.user) {
+          return result.user.sendEmailVerification()
+            .then(() => showToast('✓ Konto erstellt! Bestätigungs-E-Mail wurde gesendet.'))
+            .catch(err => { console.error('sendEmailVerification fehlgeschlagen:', err); });
+        }
+      })
       .catch(err => showAuthError(mapAuthError(err.code)))
       .finally(() => { btn.disabled = false; });
   });
@@ -2352,6 +2525,23 @@
     auth.sendPasswordResetEmail(email)
       .then(() => showToast('✓ E-Mail zum Zurücksetzen wurde gesendet.'))
       .catch(err => showAuthError(mapAuthError(err.code)));
+  }
+
+  function refreshEmailVerificationStatus() {
+    if (!currentUser) return;
+    currentUser.reload()
+      .then(() => renderProfile())
+      .catch(err => console.error('reload() fehlgeschlagen:', err));
+  }
+
+  let _verifyEmailCooldownUntil = 0;
+  function resendVerificationEmail() {
+    if (!currentUser) return;
+    if (Date.now() < _verifyEmailCooldownUntil) { showToast('Bitte kurz warten, bevor du erneut sendest.'); return; }
+    _verifyEmailCooldownUntil = Date.now() + 60000;
+    currentUser.sendEmailVerification()
+      .then(() => showToast('✓ Bestätigungs-E-Mail erneut gesendet.'))
+      .catch(err => { console.error(err); showToast(mapAuthError(err.code)); });
   }
 
   auth.onAuthStateChanged(user => {
@@ -2530,6 +2720,24 @@
     if (PRESET_TAG_COLORS[name]) return PRESET_TAG_COLORS[name];
     let h = 0;
     for (let i = 0; i < name.length; i++) h = (Math.imul(31, h) + name.charCodeAt(i)) | 0;
+    return CUSTOM_TAG_PALETTE[Math.abs(h) % CUSTOM_TAG_PALETTE.length];
+  }
+
+  // ── Profil-Avatar ─────────────────────────────────────────
+  function getInitials(user) {
+    if (user && user.displayName && user.displayName.trim()) {
+      const parts = user.displayName.trim().split(/\s+/);
+      return parts.length === 1
+        ? parts[0].slice(0, 2).toUpperCase()
+        : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    if (user && user.email) return user.email.trim().slice(0, 2).toUpperCase();
+    return '?';
+  }
+
+  function avatarColor(seed) {
+    let h = 0;
+    for (let i = 0; i < seed.length; i++) h = (Math.imul(31, h) + seed.charCodeAt(i)) | 0;
     return CUSTOM_TAG_PALETTE[Math.abs(h) % CUSTOM_TAG_PALETTE.length];
   }
 
@@ -2781,6 +2989,36 @@
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── Profil-Seite ──────────────────────────────────────────
+  function renderProfile() {
+    if (!currentUser) return;
+    document.getElementById('profileEmail').textContent = currentUser.email || '';
+    document.getElementById('profileDisplayName').value = currentUser.displayName || '';
+
+    const avatarEl = document.getElementById('profileAvatar');
+    avatarEl.textContent = getInitials(currentUser);
+    avatarEl.style.background = avatarColor(currentUser.uid);
+
+    document.getElementById('profileVerifyBanner').style.display = currentUser.emailVerified ? 'none' : 'block';
+  }
+
+  async function saveDisplayName() {
+    if (!currentUser) return;
+    const name = document.getElementById('profileDisplayName').value.trim();
+    const btn = document.getElementById('profileNameSaveBtn');
+    btn.disabled = true;
+    try {
+      await currentUser.updateProfile({ displayName: name || null });
+      renderProfile();
+      showToast('✓ Anzeigename gespeichert.');
+    } catch (err) {
+      console.error(err);
+      showToast('Fehler beim Speichern des Namens.');
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   // ── Statistik aktualisieren ──────────────────────────────
@@ -3848,6 +4086,91 @@
     }
   }
 
+  // ── Passwort ändern ──────────────────────────────────────
+  document.getElementById('changePasswordForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const errEl = document.getElementById('changePasswordError');
+    errEl.style.display = 'none';
+    const current = document.getElementById('cpCurrentPassword').value;
+    const next    = document.getElementById('cpNewPassword').value;
+    const confirm = document.getElementById('cpNewPasswordConfirm').value;
+    if (next !== confirm) {
+      errEl.textContent = 'Neue Passwörter stimmen nicht überein.';
+      errEl.style.display = 'block';
+      return;
+    }
+    const btn = document.getElementById('changePasswordBtn');
+    btn.disabled = true;
+    try {
+      await reauthenticate(current);
+      await currentUser.updatePassword(next);
+      this.reset();
+      showToast('✓ Passwort geändert.');
+    } catch (err) {
+      console.error(err);
+      errEl.textContent = mapAuthError(err.code);
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // ── E-Mail ändern ────────────────────────────────────────
+  document.getElementById('changeEmailForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const errEl = document.getElementById('changeEmailError');
+    errEl.style.display = 'none';
+    const newEmail = document.getElementById('ceNewEmail').value.trim();
+    const current  = document.getElementById('ceCurrentPassword').value;
+    const btn = document.getElementById('changeEmailBtn');
+    btn.disabled = true;
+    try {
+      await reauthenticate(current);
+      await currentUser.verifyBeforeUpdateEmail(newEmail);
+      this.reset();
+      showToast(`✓ Bestätigungslink an ${newEmail} gesendet.`);
+    } catch (err) {
+      console.error(err);
+      errEl.textContent = mapAuthError(err.code);
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // ── Konto löschen ────────────────────────────────────────
+  function requestAccountDeletion() {
+    const pw = document.getElementById('delCurrentPassword').value;
+    if (!pw) { showToast('Bitte aktuelles Passwort eingeben.'); return; }
+    document.getElementById('deleteAccountOverlay').style.display = 'flex';
+  }
+
+  function cancelAccountDeletion() {
+    document.getElementById('deleteAccountOverlay').style.display = 'none';
+  }
+
+  async function confirmAccountDeletion() {
+    cancelAccountDeletion();
+    const pw = document.getElementById('delCurrentPassword').value;
+    showToast('Konto wird gelöscht …');
+    try {
+      await reauthenticate(pw);
+      const uid = currentUser.uid;
+      const divesRef = db.collection('users').doc(uid).collection('dives');
+      const ids = divesCache.map(d => d.id);
+      for (const chunk of chunksOf(ids, 400)) {
+        const batch = db.batch();
+        chunk.forEach(id => batch.delete(divesRef.doc(id)));
+        await batch.commit();
+      }
+      await currentUser.delete();
+      showToast('Konto gelöscht.');
+    } catch (err) {
+      console.error(err);
+      showToast(mapAuthError(err.code));
+    }
+  }
+
   // ── Formular absenden ────────────────────────────────────
   document.getElementById('diveForm').addEventListener('submit', async function(e) {
     e.preventDefault(); // verhindert Seiten-Reload
@@ -4119,7 +4442,8 @@
     if (isMap) setTimeout(renderDivesMap, 30);
 
     if (isProfile) {
-      document.getElementById('profileEmail').textContent = escapeHtml(currentUser ? currentUser.email : '');
+      renderProfile();
+      refreshEmailVerificationStatus();
     }
 
     window.scrollTo({ top: 0 });
