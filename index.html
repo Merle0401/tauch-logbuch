@@ -2001,29 +2001,26 @@
   <div id="pageProfile" style="display:none">
     <div class="section-title">👤 Profil</div>
 
-    <!-- Profil-Karte -->
-    <div class="form-card" style="max-width:420px;margin:0 auto">
-      <div class="form-card-header"><h2>Profil</h2></div>
-      <div class="form-card-body">
-        <div class="profile-avatar" id="profileAvatar"></div>
+    <!-- Profil-Kopfbereich (ohne Karte) -->
+    <div style="max-width:420px;margin:0 auto">
+      <div class="profile-avatar" id="profileAvatar"></div>
 
-        <p style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;text-align:center">Angemeldet als</p>
-        <p id="profileEmail" style="font-size:1.1rem;font-weight:600;margin:0.35rem 0 1.25rem;text-align:center"></p>
+      <p style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;text-align:center">Angemeldet als</p>
+      <p id="profileEmail" style="font-size:1.1rem;font-weight:600;margin:0.35rem 0 1.25rem;text-align:center"></p>
 
-        <div class="auth-error" id="profileVerifyBanner" style="display:none;background:rgba(224,180,82,0.12);border-color:rgba(224,180,82,0.4);color:#f0c869">
-          <div id="profileVerifyText">E-Mail nicht bestätigt.</div>
-          <div style="display:flex;gap:1rem;margin-top:0.4rem">
-            <button type="button" class="auth-link" style="display:inline;width:auto;padding:0" onclick="resendVerificationEmail()">Erneut senden</button>
-            <button type="button" class="auth-link" style="display:inline;width:auto;padding:0" onclick="refreshEmailVerificationStatus()">Aktualisieren</button>
-          </div>
+      <div class="auth-error" id="profileVerifyBanner" style="display:none;background:rgba(224,180,82,0.12);border-color:rgba(224,180,82,0.4);color:#f0c869">
+        <div id="profileVerifyText">E-Mail nicht bestätigt.</div>
+        <div style="display:flex;gap:1rem;margin-top:0.4rem">
+          <button type="button" class="auth-link" style="display:inline;width:auto;padding:0" onclick="resendVerificationEmail()">Erneut senden</button>
+          <button type="button" class="auth-link" style="display:inline;width:auto;padding:0" onclick="refreshEmailVerificationStatus()">Aktualisieren</button>
         </div>
-
-        <div class="field full-width" style="margin-top:1.25rem">
-          <label for="profileDisplayName">Anzeigename</label>
-          <input type="text" id="profileDisplayName" maxlength="40" placeholder="z. B. Max Mustermann" />
-        </div>
-        <button type="button" class="btn-add" id="profileNameSaveBtn" onclick="saveDisplayName()">Speichern</button>
       </div>
+
+      <div class="field full-width" style="margin-top:1.25rem">
+        <label for="profileDisplayName">Anzeigename</label>
+        <input type="text" id="profileDisplayName" maxlength="40" placeholder="z. B. Max Mustermann" />
+      </div>
+      <button type="button" class="btn-add" id="profileNameSaveBtn" onclick="saveDisplayName()">Speichern</button>
     </div>
 
     <!-- Sicherheit-Karte -->
