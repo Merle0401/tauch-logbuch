@@ -195,6 +195,12 @@
       flex: 1;
     }
 
+    .form-card-static {
+      max-height: none;
+      overflow-y: visible;
+    }
+    .form-card-static .form-card-header { position: static; }
+
     .modal-close {
       background: none;
       border: none;
@@ -1948,6 +1954,10 @@
     .icon-btn:hover { background: #2b3648; color: #ffffff; }
     .icon-btn .material-symbols-outlined { font-size: 18px; }
 
+    .icon-btn-confirm { color: var(--accent); }
+    .icon-btn-confirm:hover { background: rgba(68,213,238,0.15); color: var(--accent); }
+    .icon-btn-cancel { color: rgba(255,255,255,0.85); }
+
     .security-subheading {
       font-size: 0.95rem;
       font-weight: 700;
@@ -2124,8 +2134,8 @@
           </div>
           <div id="profileNameEditRow" style="display:none;align-items:center;gap:0.35rem">
             <input type="text" id="profileDisplayName" maxlength="40" placeholder="z. B. Max Mustermann" style="flex:1;min-width:0" />
-            <button type="button" class="icon-btn" id="profileNameSaveIconBtn" onclick="saveDisplayName()" aria-label="Speichern"><span class="material-symbols-outlined">check</span></button>
-            <button type="button" class="icon-btn" onclick="cancelEditDisplayName()" aria-label="Abbrechen"><span class="material-symbols-outlined">close</span></button>
+            <button type="button" class="icon-btn icon-btn-confirm" id="profileNameSaveIconBtn" onclick="saveDisplayName()" aria-label="Speichern"><span class="material-symbols-outlined">check</span></button>
+            <button type="button" class="icon-btn icon-btn-cancel" onclick="cancelEditDisplayName()" aria-label="Abbrechen"><span class="material-symbols-outlined">close</span></button>
           </div>
           <p id="profileEmail" style="color:var(--text-muted);font-size:0.82rem;margin-top:0.2rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></p>
         </div>
@@ -2141,7 +2151,7 @@
     </div>
 
     <!-- Sicherheit-Karte -->
-    <div class="form-card" style="max-width:420px;margin:1.5rem auto 0">
+    <div class="form-card form-card-static" style="max-width:420px;margin:1.5rem auto 0">
       <div class="form-card-header"><h2>Sicherheit</h2></div>
       <div class="form-card-body">
         <p class="security-subheading">Passwort ändern</p>
@@ -2198,7 +2208,7 @@
     </div>
 
     <!-- Konto-Karte -->
-    <div class="form-card" style="max-width:420px;margin:1.5rem auto 0">
+    <div class="form-card form-card-static" style="max-width:420px;margin:1.5rem auto 0">
       <div class="form-card-header"><h2>Konto</h2></div>
       <div class="form-card-body">
         <button type="button" class="btn-cancel" style="margin-top:0" onclick="auth.signOut()">Abmelden</button>
