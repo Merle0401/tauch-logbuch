@@ -1850,7 +1850,83 @@
       font-weight: 700;
       color: #ffffff;
       flex-shrink: 0;
+      overflow: hidden;
     }
+
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-wrap { position: relative; flex-shrink: 0; }
+
+    .avatar-edit-btn {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #161e2b;
+      border: 2px solid #131a26;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      transition: transform 0.15s;
+    }
+    .avatar-edit-btn:hover { transform: scale(1.08); }
+    .avatar-edit-btn .material-symbols-outlined { font-size: 14px; }
+
+    /* ── Profilbild-Zuschneiden ────────────────────────────── */
+    .avatar-crop-stage {
+      width: 240px;
+      height: 240px;
+      margin: 0 auto;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+      background: #0d1420;
+      cursor: grab;
+      touch-action: none;
+      box-shadow: 0 0 0 2000px rgba(13,20,32,0.7);
+    }
+    .avatar-crop-stage:active { cursor: grabbing; }
+
+    .avatar-crop-stage img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      max-width: none;
+      max-height: none;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .avatar-crop-grid {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px);
+      background-size: 33.333% 33.333%;
+      background-position: -1px -1px;
+    }
+
+    .avatar-crop-zoom-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin: 1.25rem auto 0;
+      max-width: 240px;
+    }
+
+    .avatar-crop-zoom-row input[type="range"] { flex: 1; }
 
     .icon-btn {
       background: none;
@@ -1871,6 +1947,12 @@
     }
     .icon-btn:hover { background: #2b3648; color: #ffffff; }
     .icon-btn .material-symbols-outlined { font-size: 18px; }
+
+    .security-subheading {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+    }
 
     .danger-zone {
       margin-top: 1.5rem;
@@ -2027,8 +2109,14 @@
 
     <!-- Profil-Kopfbereich (ohne Karte) -->
     <div style="max-width:420px;margin:0 auto">
-      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
-        <div class="profile-avatar" id="profileAvatar"></div>
+      <div style="display:flex;align-items:center;gap:1rem;margin:2rem 0 1.25rem">
+        <div class="avatar-wrap">
+          <div class="profile-avatar" id="profileAvatar"></div>
+          <button type="button" class="avatar-edit-btn" onclick="document.getElementById('avatarFileInput').click()" aria-label="Profilbild ändern">
+            <span class="material-symbols-outlined">photo_camera</span>
+          </button>
+          <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarFileSelect(event)" />
+        </div>
         <div style="flex:1;min-width:0">
           <div id="profileNameDisplayRow" style="display:flex;align-items:center;gap:0.35rem">
             <span id="profileNameDisplay" style="font-size:1.15rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
@@ -2056,7 +2144,7 @@
     <div class="form-card" style="max-width:420px;margin:1.5rem auto 0">
       <div class="form-card-header"><h2>Sicherheit</h2></div>
       <div class="form-card-body">
-        <p style="font-weight:700;margin-bottom:0.85rem">Passwort ändern</p>
+        <p class="security-subheading">Passwort ändern</p>
         <form id="changePasswordForm">
           <div class="form-grid">
             <div class="field full-width">
@@ -2087,7 +2175,7 @@
 
         <hr style="border-color:var(--border);margin:1.75rem 0" />
 
-        <p style="font-weight:700;margin-bottom:0.85rem">E-Mail-Adresse ändern</p>
+        <p class="security-subheading">E-Mail-Adresse ändern</p>
         <form id="changeEmailForm">
           <div class="form-grid">
             <div class="field full-width">
@@ -2424,6 +2512,31 @@
   </div>
 </div>
 
+<!-- Profilbild-Zuschneiden -->
+<div class="modal-overlay" id="avatarCropOverlay" role="dialog" aria-modal="true">
+  <div class="form-card" style="max-width:360px">
+    <div class="form-card-header">
+      <h2>Profilbild anpassen</h2>
+      <button class="modal-close" onclick="closeAvatarCropOverlay()" aria-label="Schließen"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="form-card-body" style="text-align:center">
+      <div class="avatar-crop-stage" id="avatarCropStage">
+        <img id="avatarCropImg" alt="" draggable="false" />
+        <div class="avatar-crop-grid" aria-hidden="true"></div>
+      </div>
+      <div class="avatar-crop-zoom-row">
+        <span class="material-symbols-outlined" style="font-size:18px;color:var(--text-muted)">photo_size_select_small</span>
+        <input type="range" id="avatarZoomSlider" min="100" max="300" value="100" oninput="onAvatarZoomChange()" />
+        <span class="material-symbols-outlined" style="font-size:18px;color:var(--text-muted)">zoom_in</span>
+      </div>
+      <div style="display:flex;gap:0.75rem;margin-top:1.5rem">
+        <button type="button" class="btn-cancel" style="margin-top:0" onclick="closeAvatarCropOverlay()">Abbrechen</button>
+        <button type="button" class="btn-add" id="avatarSaveBtn" style="margin-top:0" onclick="saveCroppedAvatar()">Übernehmen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -2592,14 +2705,23 @@
       .catch(err => { console.error(err); showToast(mapAuthError(err.code)); });
   }
 
+  let userAvatarUrl = null;
+
   auth.onAuthStateChanged(user => {
     currentUser = user;
     document.getElementById('authGate').style.display = user ? 'none' : 'flex';
     if (user) {
       startDivesListener(user.uid);
+      db.collection('users').doc(user.uid).get()
+        .then(doc => {
+          userAvatarUrl = (doc.exists && doc.data().avatar) || null;
+          renderProfile();
+        })
+        .catch(err => console.error('Profilbild konnte nicht geladen werden:', err));
     } else {
       stopDivesListener();
       divesCache = [];
+      userAvatarUrl = null;
       renderDives();
     }
   });
@@ -3048,8 +3170,14 @@
     cancelEditDisplayName();
 
     const avatarEl = document.getElementById('profileAvatar');
-    avatarEl.textContent = getInitials(currentUser);
-    avatarEl.style.background = avatarColor(currentUser.uid);
+    if (userAvatarUrl) {
+      avatarEl.style.background = 'none';
+      avatarEl.innerHTML = `<img src="${userAvatarUrl}" alt="" />`;
+    } else {
+      avatarEl.innerHTML = '';
+      avatarEl.textContent = getInitials(currentUser);
+      avatarEl.style.background = avatarColor(currentUser.uid);
+    }
 
     document.getElementById('profileVerifyBanner').style.display = currentUser.emailVerified ? 'none' : 'block';
   }
@@ -3064,6 +3192,139 @@
     document.getElementById('profileNameDisplayRow').style.display = 'flex';
     document.getElementById('profileNameEditRow').style.display = 'none';
     document.getElementById('profileDisplayName').value = currentUser ? (currentUser.displayName || '') : '';
+  }
+
+  // ── Profilbild: Auswahl + Zuschneiden (ziehen & zoomen) ───
+  const AVATAR_STAGE_SIZE  = 240;
+  const AVATAR_OUTPUT_SIZE = 240;
+  let avatarCropState = null;
+
+  function handleAvatarFileSelect(e) {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const img = document.getElementById('avatarCropImg');
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      initAvatarCrop(img.naturalWidth, img.naturalHeight);
+    };
+    img.src = url;
+    document.getElementById('avatarCropOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function initAvatarCrop(naturalW, naturalH) {
+    const baseScale = Math.max(AVATAR_STAGE_SIZE / naturalW, AVATAR_STAGE_SIZE / naturalH);
+    avatarCropState = {
+      naturalW, naturalH, baseScale, zoom: 1,
+      offsetX: (AVATAR_STAGE_SIZE - naturalW * baseScale) / 2,
+      offsetY: (AVATAR_STAGE_SIZE - naturalH * baseScale) / 2,
+    };
+    document.getElementById('avatarZoomSlider').value = 100;
+    applyAvatarCropTransform();
+  }
+
+  function currentAvatarScale() {
+    return avatarCropState.baseScale * avatarCropState.zoom;
+  }
+
+  function applyAvatarCropTransform() {
+    const scale = currentAvatarScale();
+    const dispW = avatarCropState.naturalW * scale;
+    const dispH = avatarCropState.naturalH * scale;
+    avatarCropState.offsetX = Math.min(0, Math.max(AVATAR_STAGE_SIZE - dispW, avatarCropState.offsetX));
+    avatarCropState.offsetY = Math.min(0, Math.max(AVATAR_STAGE_SIZE - dispH, avatarCropState.offsetY));
+
+    const img = document.getElementById('avatarCropImg');
+    img.style.width  = dispW + 'px';
+    img.style.height = dispH + 'px';
+    img.style.transform = `translate(${avatarCropState.offsetX}px, ${avatarCropState.offsetY}px)`;
+  }
+
+  function onAvatarZoomChange() {
+    if (!avatarCropState) return;
+    avatarCropState.zoom = parseInt(document.getElementById('avatarZoomSlider').value, 10) / 100;
+    applyAvatarCropTransform();
+  }
+
+  // Ziehen per Maus/Touch – Stage-Element wird einmal beim Laden verdrahtet,
+  // reagiert aber nur, wenn gerade ein Bild zum Zuschneiden geladen ist.
+  (function wireAvatarCropDrag() {
+    const stage = document.getElementById('avatarCropStage');
+    let dragging = false, startX = 0, startY = 0, startOffX = 0, startOffY = 0;
+
+    function down(x, y) {
+      if (!avatarCropState) return;
+      dragging = true;
+      startX = x; startY = y;
+      startOffX = avatarCropState.offsetX;
+      startOffY = avatarCropState.offsetY;
+    }
+    function move(x, y) {
+      if (!dragging || !avatarCropState) return;
+      avatarCropState.offsetX = startOffX + (x - startX);
+      avatarCropState.offsetY = startOffY + (y - startY);
+      applyAvatarCropTransform();
+    }
+    function up() { dragging = false; }
+
+    stage.addEventListener('mousedown', e => { e.preventDefault(); down(e.clientX, e.clientY); });
+    window.addEventListener('mousemove', e => move(e.clientX, e.clientY));
+    window.addEventListener('mouseup', up);
+
+    stage.addEventListener('touchstart', e => { down(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+    window.addEventListener('touchmove', e => {
+      if (!dragging) return;
+      e.preventDefault();
+      move(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+    window.addEventListener('touchend', up);
+
+    stage.addEventListener('wheel', e => {
+      if (!avatarCropState) return;
+      e.preventDefault();
+      const slider = document.getElementById('avatarZoomSlider');
+      slider.value = Math.min(300, Math.max(100, parseInt(slider.value, 10) - Math.sign(e.deltaY) * 10));
+      onAvatarZoomChange();
+    }, { passive: false });
+  })();
+
+  function closeAvatarCropOverlay() {
+    document.getElementById('avatarCropOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    avatarCropState = null;
+    document.getElementById('avatarCropImg').src = '';
+  }
+
+  async function saveCroppedAvatar() {
+    if (!avatarCropState || !currentUser) return;
+    const img   = document.getElementById('avatarCropImg');
+    const scale = currentAvatarScale();
+    const sx    = -avatarCropState.offsetX / scale;
+    const sy    = -avatarCropState.offsetY / scale;
+    const sSize = AVATAR_STAGE_SIZE / scale;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = AVATAR_OUTPUT_SIZE;
+    canvas.height = AVATAR_OUTPUT_SIZE;
+    canvas.getContext('2d').drawImage(img, sx, sy, sSize, sSize, 0, 0, AVATAR_OUTPUT_SIZE, AVATAR_OUTPUT_SIZE);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+    const btn = document.getElementById('avatarSaveBtn');
+    btn.disabled = true;
+    try {
+      await db.collection('users').doc(currentUser.uid).set({ avatar: dataUrl }, { merge: true });
+      userAvatarUrl = dataUrl;
+      closeAvatarCropOverlay();
+      renderProfile();
+      showToast('✓ Profilbild gespeichert.');
+    } catch (err) {
+      console.error(err);
+      showToast('Fehler beim Speichern des Profilbilds.');
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   async function saveDisplayName() {
